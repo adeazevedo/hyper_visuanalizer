@@ -2,9 +2,9 @@
   <v-navigation-drawer class="transparent" :mini-variant.sync="mini" v-model="drawer" hide-overlay stateless >
     <v-toolbar flat >
       <v-list class="pa-0">
-        <v-list-tile avatar>
+        <v-list-tile >
           <v-list-tile-avatar>
-            <v-icon color=blue>touch_app</v-icon>
+            <v-icon color=black>touch_app</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>Recursos</v-list-tile-title>
@@ -17,29 +17,14 @@
         </v-list-tile>
       </v-list>
     </v-toolbar>
-
-    <v-list class="pt-0" dense>
-      <v-divider></v-divider>
-      <v-list-tile >
-        <v-list-tile-action>
-          <v-icon>dashboard</v-icon>
-        </v-list-tile-action>
-
-        <v-list-tile-content>
-          <v-list-tile-title>Camada base</v-list-tile-title>
-        </v-list-tile-content>
-        <v-list-tile-action>
-            <radio-group name="baseLayersRadio" items="baseLayersRadio" v-on:changed_item_on_baseLayersRadio=baseLayersRadioChanged></radio-group>
-        </v-list-tile-action>
-      </v-list-tile>
-    </v-list>
+    <basic-list-radio-button name="BaseLayersRadio" v-bind:items="baseLayersRadio" v-on:changed_item_on_BaseLayersRadio=baseLayersRadioChanged icon_name="layers" title="Camada base"></basic-list-radio-button>
   </v-navigation-drawer>
 </template>
 <script>
-  //import BasicRadioGroup from './basic/BasicRadioGroup'
+  import BasicListRadioButton from './basic/BasicListRadioButton'
   export default {
     name: 'hv-nav-drawer',
-    //components: { radioGroup },
+    components: { BasicListRadioButton },
     data () {
       return {
         drawer: true,
@@ -47,16 +32,16 @@
           { title: 'Camadas base', icon: 'dashboard' },
           { title: 'Sobre', icon: 'question_answer' }
         ],
-        baseLayers: [],
         mini: true,
         right: null,
-        baseLayersRadio: [{name: 'Openstreetmap', value: 'OSM'}, {name: 'Google', value: 'google'}, {name: 'Satélite', value: 'satelite'}, {name: 'Water color', value: 'watercolor'}, {name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: 'null'} ],
-        baseLayers: []
+        baseLayersRadio: [{name: 'Openstreetmap', value: 'OSM'}, {name: 'Google', value: 'google'}, {name: 'Satélite', value: 'satelite'}, {name: 'Water color', value: 'watercolor'}, {name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]
+
       }
     },
     methods: {
-      baseLayersRadioChanged(itemRadio) {
-        this.$facadeOL.setBaseLayer(itemRadio.value)
+      baseLayersRadioChanged(item_radio_base_layer) {
+
+        this.$store.state.facadeOL.setBaseLayer(item_radio_base_layer.value)
       }
     }
   }

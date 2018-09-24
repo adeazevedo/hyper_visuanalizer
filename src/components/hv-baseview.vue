@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { FacadeOL } from '../utils/facade_openLayers.js';
+
 export default {
   name: 'hv-baseview',
   data () {
@@ -22,7 +22,8 @@ export default {
   },
   mounted() {
     // FacadeOL default values => id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM'
-    this.$facadeOL= new FacadeOL();
+    this.$store.commit('default_facadeOL')
+    //this.$store.state.facadeOL= this.$store.state.;
   }
 }
 </script>
