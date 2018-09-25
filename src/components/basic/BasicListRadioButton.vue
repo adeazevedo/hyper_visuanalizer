@@ -1,32 +1,25 @@
 <template>
-      <v-list class="pa-0" :prepend-icon="iscollapsed?more_vert:dashboard" no-action>
-
-        <v-list-tile>
-          <v-list-tile-avatar>
-            <v-icon color=blue>{{icon_name}}</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>{{title}}</v-list-tile-title>
-          </v-list-tile-content>
+  <v-list class="pa-0">
+    <v-list-group no-action>
+        <v-list-tile slot="activator">
+            <v-list-tile-avatar>
+              <v-icon color=blue>{{icon_name}}</v-icon>
+            </v-list-tile-avatar>
+            <v-list-tile-content>
+              <v-list-tile-title>{{title}}</v-list-tile-title>
+            </v-list-tile-content>
         </v-list-tile>
-          <v-list-tile-content>
+        <v-radio-group :mandatory="true" @change="onChange" v-model="selectedItem">
+              <v-list-tile v-for="(item, index) in items" :key="item.name" >
+                  <v-list-tile-content>
+                    <v-list-tile-title><v-radio :value="item" :label="item.name" ></v-radio> </v-list-tile-title>
+                </v-list-tile-content>
+              </v-list-tile>
+        </v-radio-group>
 
-            <v-radio-group :mandatory="true" @change="onChange" v-model="selectedItem" slot="activator" >
-               <template v-for="(item, index) in items">
-                  <v-list-tile>
-                     <v-list-tile-action>
-                        <v-radio :value="item" :key="index" ></v-radio>
-                     </v-list-tile-action>
-                     <v-list-tile-content>
-                        <v-list-tile-title>{{ item.name }}</v-list-tile-title>
-                     </v-list-tile-content>
-                  </v-list-tile>
-               </template>
-            </v-radio-group>
+    </v-list-group>
 
-        </v-list-tile-content>
-        
-      </v-list>
+</v-list>
 </template>
 
 <script>
