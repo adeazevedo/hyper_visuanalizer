@@ -1,0 +1,10 @@
+How to use - BasicListRadioButton
+<basic-list-radio-button name="a_name" v-on:changed_item_on_a_name=parent_function v-bind:items="items" icon_name="a_icon_name" title="a_title"></basic-list-radio-button>
+props: {
+    name: {type: String, required: true},
+    items: { type: Array, required: true}, // Items is Array. each Item  => {name: a_name, value: a_value }
+    icon_name: {type: String, required: false},
+    title: {type: String, required: false}
+  }
+changed_item_on_"a_name" is emitted by component on changed radiobutton
+
