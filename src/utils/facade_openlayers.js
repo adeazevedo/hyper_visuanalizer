@@ -3,6 +3,7 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import OSM from 'ol/source/XYZ';
+import BingMaps from 'ol/source/BingMaps';
 
 export class FacadeOL {
     constructor(id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
@@ -25,7 +26,7 @@ export class FacadeOL {
     }
     sateliteBaseLayer() {
 
-      return new TileLayer({source: new OSM({url: 'http://khm{0-3}.googleapis.com/kh?v=742&hl=pl&&x={x}&y={y}&z={z}'}), zIndex: 0})
+      return new TileLayer({visible: false, preload: Infinity, source: new BingMaps({ key:'As1HiMj1PvLPlqc_gtM7AqZfBL8ZL3VrjaS3zIb22Uvb9WKhuJObROC-qUpa81U5', imagerySet: 'Aerial'}), zIndex: 0})
     }
     watercolorBaseLayer() {
       return new TileLayer({source: new XYZ({url: 'http://{a-c}.tile.stamen.com/watercolor/{z}/{x}/{y}.png'}), zIndex: 0})
@@ -33,6 +34,7 @@ export class FacadeOL {
     wikimediaBaseLayer() {
       return new TileLayer({source: new XYZ({url: 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png'}), zIndex: 0})
     }
+
 
     baseLayer(a_baseLayer_name) {
       // name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]

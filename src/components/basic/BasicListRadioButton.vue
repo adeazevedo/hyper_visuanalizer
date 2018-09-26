@@ -10,15 +10,13 @@
             </v-list-tile-content>
         </v-list-tile>
         <v-radio-group :mandatory="true" @change="onChange" v-model="selectedItem">
-              <v-list-tile v-for="(item, index) in items" :key="item.name" >
+              <v-list-tile v-for="(item, index) in items" :key="item.name" noaction>
                   <v-list-tile-content>
                     <v-list-tile-title><v-radio :value="item" :label="item.name" ></v-radio> </v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
         </v-radio-group>
-
     </v-list-group>
-
 </v-list>
 </template>
 

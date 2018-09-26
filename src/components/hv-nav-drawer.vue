@@ -1,24 +1,31 @@
 <template>
+  <div>
+    <v-btn icon @click.stop="closeDrawer()" fixed top left fab>
+       <v-icon>{{icon_btn}}</v-icon>
+    </v-btn>
+
   <v-navigation-drawer class="transparent" :mini-variant.sync="mini" v-model="drawer" hide-overlay stateless >
-    <v-toolbar flat >
-      <v-list class="pa-0">
-        <v-list-tile >
-          <v-list-tile-avatar>
-            <v-icon color=black>touch_app</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title>Recursos</v-list-tile-title>
-          </v-list-tile-content>
-          <v-list-tile-action>
-            <v-btn icon @click.stop="mini = !mini">
-              <v-icon>chevron_left</v-icon>
-            </v-btn>
-          </v-list-tile-action>
-        </v-list-tile>
-      </v-list>
-    </v-toolbar>
-    <basic-list-radio-button name="BaseLayersRadio" v-bind:items="baseLayersRadio" v-on:changed_item_on_BaseLayersRadio=baseLayersRadioChanged icon_name="layers" title="Camada base"></basic-list-radio-button>
+
+        <v-list class="pa-0">
+            <v-list-tile >
+              <v-list-tile-avatar>
+                <v-icon color=black>touch_app</v-icon>
+              </v-list-tile-avatar>
+              <v-list-tile-content>
+                <v-list-tile-title>Recursos</v-list-tile-title>
+              </v-list-tile-content>
+              <v-list-tile-action>
+                <v-btn icon @click.stop="mini = !mini">
+                  <v-icon>chevron_left</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+            </v-list-tile>
+          </v-list>
+
+        <basic-list-radio-button name="BaseLayersRadio" v-on:changed_item_on_BaseLayersRadio=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
+
   </v-navigation-drawer>
+  </div>
 </template>
 <script>
   import BasicListRadioButton from './basic/BasicListRadioButton'
@@ -28,6 +35,8 @@
     data () {
       return {
         drawer: true,
+        icon_btn: 'chevron_right',
+        btn_color: 'green',
         items: [
           { title: 'Camadas base', icon: 'dashboard' },
           { title: 'Sobre', icon: 'question_answer' }
@@ -42,7 +51,15 @@
       baseLayersRadioChanged(item_radio_base_layer) {
 
         this.$store.state.facadeOL.setBaseLayer(item_radio_base_layer.value)
+      },
+      closeDrawer() {
+        this.drawer = !this.drawer
+        console.log(this.drawer);
+        this.icon_btn = this.drawer?'chevron_left':'chevron_right'
       }
+    },
+    mounted() {
+      this.icon_btn ='chevron_left'
     }
   }
 </script>
