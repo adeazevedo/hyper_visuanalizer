@@ -11,7 +11,7 @@
       </v-list-tile>
       <v-list-tile>
           <v-list-tile-content>
-            <v-select  class="elevation-0" :items="items" item-value="selectedInstituion.name" v-model="selectedInstituion" dense  ></v-select>
+            <v-select  class="elevation-0" :items="items" v-model="item" item-text= "name" hint="hint" @change="onChange"  box single-line dense ></v-select>
           </v-list-tile-content>
         </v-list-tile>
     </v-list-group>
@@ -24,30 +24,32 @@ export default {
     items: { type: Array, required: true}, // Items is Array. each Item  is an object => {name: a_name, value: a_value }
     icon_name: {type: String, required: false},
     title: {type: String, required: false},
+    hint:{type: String, required: false}
 
   },
   data() {
    return {
-     selectedItems: [],
-     selectedInstituion: null
+     itemsName: [],
+     item: ''
    }
   },
   methods: {
-    onChange() {
+    onChange(anItem) {
       let changed_item_on = "changed-items-on-list-checkbox"
-      console.log(changed_item_on);
+      let idx = this.itemsName.indexOf(this.item)
+      console.log(this.item)
+      console.log(this.items[idx])
+
       //this.$emit(changed_item_on, this.selectedItem)
     },
-    itemsName() {
-       let names = this.items.map(item => (item.name))
-       console.log(names)
-       return names
+    changedItem(item) {
+      //console.log(item);
+      console.log(this.selectedInstituion);
     }
+
   },
   mounted() {
-
-      console.log(this.title)
-
+    this.itemsName = this.items.map(item => item.name)
   }
 }
 </script>
