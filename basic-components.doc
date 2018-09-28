@@ -1,15 +1,15 @@
 
 BasicListRadioButton
 Propose: List of radion button to use inside a list
-Obs: This component should be used inside <v-list-group no-action> in <v-list class="pa-0">
+Obs: This component should be used inside for instance in <v-navigation-drawer>
 How to use:
-<basic-list-radio-button name="a_name" v-on:changed_item_on_a_name=parent_function v-bind:items="items" icon_name="a_icon_name" title="a_title"></basic-list-radio-button>
+<basic-list-radio-button name="a_name" v-on:changed-item-on-list-radio-button=parent_function v-bind:items="items" icon_name="a_icon_name" title="a_title"></basic-list-radio-button>
 properties:
 {
-    name: {type: String, required: true},
-    items: { type: Array, required: true}, // Items is Array. each Item  => {name: a_name, value: a_value }
-    icon_name: {type: String, required: false},
-    title: {type: String, required: false}
-  }
-events:  
-changed_item_on_"a_name" is emitted by component on changed radiobutton. Where "a_name" is the name of the component
+    name: {type: String, required: false}, // a name to the component
+    items: { type: Array, required: true}, // Items is Array. each Item have to be an object => {name: a_name, value: a_value}
+    icon_name: {type: String, required: false}, // An icon that represents the list radio
+    title: {type: String, required: false} // A title that represents the radio
+}
+events:
+changed-item-on-list-radio-button is emitted by component on changed radiobutton with selected item. Item is an object => {name: a_name, value: a_value }

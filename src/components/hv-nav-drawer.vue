@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <v-btn icon @click.stop="closeDrawer()" fixed top left fab>
-       <v-icon>{{icon_btn}}</v-icon>
+<div>
+    <v-btn icon @click.stop="closeDrawer()" fixed  top left class="transparent pa-0 ma-0" >
+       <v-icon color="pink">{{icon_btn}}</v-icon>
     </v-btn>
-
-  <v-navigation-drawer class="transparent" :mini-variant.sync="mini" v-model="drawer" hide-overlay stateless >
-
+  <v-navigation-drawer :mini-variant.sync="mini" v-model="drawer" hide-overlay stateless style="margin-top: 55px; opacity: 0.65;" >
         <v-list class="pa-0">
             <v-list-tile >
               <v-list-tile-avatar>
@@ -21,17 +19,19 @@
               </v-list-tile-action>
             </v-list-tile>
           </v-list>
-
-        <basic-list-radio-button name="BaseLayersRadio" v-on:changed_item_on_BaseLayersRadio=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
-
+          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
+          <basic-list-checkbox  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-checkbox>
+          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
+          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
   </v-navigation-drawer>
   </div>
 </template>
 <script>
   import BasicListRadioButton from './basic/BasicListRadioButton'
+  import BasicListCheckbox from './basic/BasicListCheckbox'
   export default {
     name: 'hv-nav-drawer',
-    components: { BasicListRadioButton },
+    components: { BasicListRadioButton, BasicListCheckbox },
     data () {
       return {
         drawer: true,
@@ -43,18 +43,17 @@
         ],
         mini: true,
         right: null,
-        baseLayersRadio: [{name: 'Openstreetmap', value: 'OSM'}, {name: 'Google', value: 'google'}, {name: 'Satélite', value: 'satelite'}, {name: 'Water color', value: 'watercolor'}, {name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]
-
+        baseLayersRadio: [{name: 'Openstreetmap', value: 'OSM'}, {name: 'Google', value: 'google'}, {name: 'Google Satélite', value: 'satelite'}, {name: 'Water color', value: 'watercolor'}, {name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}],
+        registeredWMSCapability: [{name: 'BNDES', title: 'Banco Nacional de Desenvolvimento Econômico e Social', url: 'http://www.geoservicos.inde.gov.br/geoserver/BNDES/wms', registration: '', service_type: ''},
+                                  {name: 'SPM', title: 'Secretaria Nacional de Políticas para Mulher', url: 'http://www.geoservicos.inde.gov.br/geoserver/SPM/wms', registration: '', service_type: ''}]
       }
     },
     methods: {
       baseLayersRadioChanged(item_radio_base_layer) {
-
         this.$store.state.facadeOL.setBaseLayer(item_radio_base_layer.value)
       },
       closeDrawer() {
         this.drawer = !this.drawer
-        console.log(this.drawer);
         this.icon_btn = this.drawer?'chevron_left':'chevron_right'
       }
     },

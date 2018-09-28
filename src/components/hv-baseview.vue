@@ -1,8 +1,5 @@
 <template>
   <v-app dark id="map">
-      <div id="inspire">
-
-      </div>
   </v-app>
 </template>
 
