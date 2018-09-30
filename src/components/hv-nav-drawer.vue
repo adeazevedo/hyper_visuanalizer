@@ -20,7 +20,7 @@
             </v-list-tile>
           </v-list>
           <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
-          <basic-list-checkbox  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-checkbox>
+          <basic-list-wms  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-wms>
           <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
           <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
   </v-navigation-drawer>
@@ -28,10 +28,10 @@
 </template>
 <script>
   import BasicListRadioButton from './basic/BasicListRadioButton'
-  import BasicListCheckbox from './basic/BasicListCheckbox'
+  import BasicListWms from './basic/BasicListWms'
   export default {
     name: 'hv-nav-drawer',
-    components: { BasicListRadioButton, BasicListCheckbox },
+    components: { BasicListRadioButton, BasicListWms },
     data () {
       return {
         drawer: true,
