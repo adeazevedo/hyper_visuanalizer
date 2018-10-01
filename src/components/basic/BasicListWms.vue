@@ -17,19 +17,24 @@
        <v-list-tile>
            <v-list-tile-content>
              <v-text-field  v-model="url" label="WMS URL"  single-line solo ></v-text-field >
-             
            </v-list-tile-content>
            <v-list-tile-content>
                <v-btn icon :disabled="url==''" @click.stop="search" >
                   <v-icon  color="blue">search</v-icon>
-                </v-btn> 
+                </v-btn>
            </v-list-tile-content>
             <v-list-tile-content>
                <v-btn icon @click.stop="cancel" >
                   <v-icon color="red">cancel</v-icon>
-                </v-btn> 
+                </v-btn>
            </v-list-tile-content>
-           
+        </v-list-tile>
+        <v-list-tile >
+              <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
+
+          <v-list-tile-content>    
+              <option v-for="(layer, index) in wmsLayers">{{ layer.name }}</option>
+           </v-list-tile-content>
         </v-list-tile>
     </v-list-group>
   </v-list>
@@ -51,7 +56,9 @@ export default {
      itemsName: [],
      item: '',
      url: '',
-     errors: []
+     errors: [],
+     wmsLayers: [],
+     selectedLayers: []
    }
   },
   methods: {
@@ -65,34 +72,27 @@ export default {
       console.log(itemObject)
       //this.$emit(changed_item_on, itemObject)
     },
-    changedItem(item) {
-      //console.log(item);
-      console.log(this.selectedInstituion);
-    },
     cancel() {
       this.item = ''
       this.url = ''
     },
-    normalizedURL() {
-      let id = this.url.toUpperCase().indexOf('GetCapabilities'.toUpperCase())
-      if (id == -1)
-        return this.url + '?service=wms&request=GetCapabilities'
-      return this.url
-    },
     async search() {
       if (this.url =='')
         return
-      let iri = this.normalizedURL()
-         console.log(iri);  
-       try {
-         
-                   const response = await axios.get(iri)
-          console.log( response.data)
+      let iri = this.$store.state.facadeOL.normalizedUrlWMSCapabilities(this.url)
+      try {
+          const response = await axios.get(iri)
+          this.wmsLayers = this.$store.state.facadeOL.getWMSLayers(response.data);
+
         } catch (e) {
+          console.log("Houve algum erro durante a requisição")
           this.errors.push(e)
           console.log(this.errors);
-          
         }
+    },
+    layerCheckboxClicked(a_layer) {
+      console.log(this.selectedLayers);
+      //console.log(this.selectedLayers);
     }
   },
   mounted() {

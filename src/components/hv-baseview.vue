@@ -4,25 +4,23 @@
 </template>
 
 <script>
-
-export default {
-  name: 'hv-baseview',
-  data () {
-    return {
-      map: null,
-      view: null,
-      layers: []
+  export default {
+    name: 'hv-baseview',
+    data () {
+      return {
+        map: null,
+        view: null,
+        layers: []
+      }
+    },
+    methods: {
+    },
+    mounted() {
+      // FacadeOL default values => id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM'
+      this.$store.commit('default_facadeOL')
+      //this.$store.state.facadeOL= this.$store.state.;
     }
-  },
-  methods: {
-
-  },
-  mounted() {
-    // FacadeOL default values => id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM'
-    this.$store.commit('default_facadeOL')
-    //this.$store.state.facadeOL= this.$store.state.;
   }
-}
 </script>
 
 <style>

@@ -4,6 +4,19 @@ import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import OSM from 'ol/source/XYZ';
 import TileImage from 'ol/source/TileImage';
+import WMSCapabilities from 'ol/format/WMSCapabilities';
+
+export class WMSLayer {
+  constructor(ogcWMSLayer, wms_version, wms_online_resource, layer_was_requested=false) {
+    this.name = ogcWMSLayer.Name
+    this.title = ogcWMSLayer.Title
+    this.bbox = ogcWMSLayer.EX_GeographicBoundingBox
+    this.metadata = ogcWMSLayer.MetadataURL
+    this.version = wms_version
+    this.entryPoint = wms_online_resource
+    this.was_requested = layer_was_requested
+  }
+}
 
 export class FacadeOL {
     constructor(id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
@@ -12,6 +25,7 @@ export class FacadeOL {
       this.map.setView(this.view);
       this.currentBaseLayer = this.osmBaseLayer();
       this.map.addLayer(this.currentBaseLayer);
+
     }
     // Begins - These operations are related to the baselayer
     //return a null base layer
@@ -41,7 +55,7 @@ export class FacadeOL {
     //returns a TileLayer based on name(a_baseLayer_name) or null
     baseLayer(a_baseLayer_name) {
       // name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]
-        const layers = {
+      const layers = {
           'OSM': this.osmBaseLayer(),
           'google': this.googleBaseLayer() ,
           'satelite': this.sateliteBaseLayer(),
@@ -60,7 +74,27 @@ export class FacadeOL {
     }
     // Ends - These operations above are related to the baselayer
     // Begins - These operations are related to the WMS
+    normalizedUrlWMSCapabilities(url) {
+      let id = url.toUpperCase().indexOf('GetCapabilities'.toUpperCase())
+      if (id == -1)
+        return url + '?service=wms&request=GetCapabilities'
+      return url
+    }
+    getWMSCapabilities(resquestedXml) {
+      let  parser = new WMSCapabilities()
+      return parser.read(resquestedXml)
+    }
+    getWMSLayers(requestedXml) {
+      let capability_json = this.getWMSCapabilities(requestedXml)
+      let layers = capability_json.Capability.Layer.Layer
+      console.log(capability_json)
+      return layers.map((a_layer) => new WMSLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
+    }
 
-    // Ends - These operations above are related to the WMS
+    getWMSMap(wmsLayer) {
+      return new ImageLayer({ extent: wmsLayer.bbox, source: new ImageWMS({  url: wmsLayer.entryPoint, params: {'LAYERS': wmsLayer.name }, ratio: 1, serverType: 'geoserver' })})
+    }
+
+    // End - These operations above are related to the WMS
 
 }

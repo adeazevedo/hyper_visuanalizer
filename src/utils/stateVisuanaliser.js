@@ -6,7 +6,6 @@ import { FacadeOL } from './facade_openLayers.js'
 export const store = new Vuex.Store({
   state: {
     facadeOL: null
-
   },
   mutations: {
     default_facadeOL(state, id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM') {

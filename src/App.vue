@@ -5,18 +5,17 @@
       <hv-nav-drawer/>
     </v-app>
   </div>
-
 </template>
 
 <script>
-import HvBaseview from './components/hv-baseview'
-import  HvNavDrawer from './components/hv-nav-drawer'
-export default {
-  name: 'app',
-  components: { 'hv-baseview': HvBaseview,
-                'hv-nav-drawer': HvNavDrawer
+  import HvBaseview from './components/hv-baseview'
+  import  HvNavDrawer from './components/hv-nav-drawer'
+  export default {
+    name: 'app',
+    components: { 'hv-baseview': HvBaseview,
+                  'hv-nav-drawer': HvNavDrawer
+    }
   }
-}
 </script>
 
 <style>
