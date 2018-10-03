@@ -1,20 +1,28 @@
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
-import OSM from 'ol/source/XYZ';
-import TileImage from 'ol/source/TileImage';
-import WMSCapabilities from 'ol/format/WMSCapabilities';
-
+import Map from 'ol/Map'
+import View from 'ol/View'
+import TileLayer from 'ol/layer/Tile'
+import XYZ from 'ol/source/XYZ'
+import OSM from 'ol/source/XYZ'
+import TileImage from 'ol/source/TileImage'
+import ImageLayer from 'ol/layer/Image'
+import ImageWMS from 'ol/source/ImageWMS'
+import WMSCapabilities from 'ol/format/WMSCapabilities'
+import {transformExtent} from 'ol/proj'
+import Stroke from 'ol/style/Stroke'
+import Graticule from 'ol/Graticule'
 export class WMSLayer {
   constructor(ogcWMSLayer, wms_version, wms_online_resource, layer_was_requested=false) {
     this.name = ogcWMSLayer.Name
     this.title = ogcWMSLayer.Title
-    this.bbox = ogcWMSLayer.EX_GeographicBoundingBox
     this.metadata = ogcWMSLayer.MetadataURL
     this.version = wms_version
     this.entryPoint = wms_online_resource
     this.was_requested = layer_was_requested
+    this.crsName= ogcWMSLayer.CRS[0] // NÃO ESTÁ FUNCIONANDO PARA EPSG:4674 => FORÇADO PARA 'EPSG:4326'
+    let extent = ogcWMSLayer.EX_GeographicBoundingBox
+    let bbox = transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+    this.bbox = bbox
+    this.olLayer = null
   }
 }
 
@@ -80,21 +88,37 @@ export class FacadeOL {
         return url + '?service=wms&request=GetCapabilities'
       return url
     }
-    getWMSCapabilities(resquestedXml) {
+    getWMSCapabilitiesAsJSON(resquestedXml) {
       let  parser = new WMSCapabilities()
       return parser.read(resquestedXml)
     }
     getWMSLayers(requestedXml) {
-      let capability_json = this.getWMSCapabilities(requestedXml)
+      let capability_json = this.getWMSCapabilitiesAsJSON(requestedXml)
       let layers = capability_json.Capability.Layer.Layer
-      console.log(capability_json)
       return layers.map((a_layer) => new WMSLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
     }
-
     getWMSMap(wmsLayer) {
-      return new ImageLayer({ extent: wmsLayer.bbox, source: new ImageWMS({  url: wmsLayer.entryPoint, params: {'LAYERS': wmsLayer.name }, ratio: 1, serverType: 'geoserver' })})
+      console.log(wmsLayer);
+      let wmsSource = new ImageWMS({url: wmsLayer.entryPoint +'/wms', params: {'LAYERS': wmsLayer.name}})
+      return new ImageLayer({extent: wmsLayer.bbox, source: wmsSource})
+    }
+    addWMSLayer(wmsLayer) {
+      let image_layer = this.getWMSMap(wmsLayer)
+      this.map.addLayer(image_layer)
+      wmsLayer.olLayer = image_layer
+      return wmsLayer
+    }
+    removeWMSLayer(wmsLayer) {
+      this.map.removeLayer(wmsLayer.olLayer)
+      wmsLayer.olLayer = null
+    }
+    // End - These operations above are related to the WMS
+    //
+    showGraticule(color='rgba(255,120,0,0.9)', width=2, lineDash=[0.5, 4], showLabels=true) {
+      let strokeStyle = new Stroke({ color: color, width: width, lineDash: lineDash })
+      let graticule = new Graticule({ strokeStyle: strokeStyle, showLabels: showLabels})
+      graticule.setMap(this.map)
     }
 
-    // End - These operations above are related to the WMS
-
+    //
 }

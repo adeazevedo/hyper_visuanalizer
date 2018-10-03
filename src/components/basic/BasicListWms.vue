@@ -29,12 +29,16 @@
                 </v-btn>
            </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile >
-              <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
 
-          <v-list-tile-content>    
-              <option v-for="(layer, index) in wmsLayers">{{ layer.name }}</option>
-           </v-list-tile-content>
+        <v-list-tile v-for="(layer, index) in wmsLayersFromGetCapabilities" :key="index" >
+              <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
+          <v-list-tile-action>
+            <v-switch  @click.native="layerSwitchClicked(index)"  v-model="layersBoolean[index]"  color="cyan"/></v-switch>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            {{layer.title}}
+            <!--<v-checkbox  @click="layerCheckboxClicked(layer)" :value="layer" :label="layer.name"></v-checkbox>-->
+          </v-list-tile-content>
         </v-list-tile>
     </v-list-group>
   </v-list>
@@ -57,8 +61,10 @@ export default {
      item: '',
      url: '',
      errors: [],
-     wmsLayers: [],
-     selectedLayers: []
+     wmsLayersFromGetCapabilities: [],
+     selectedLayers: [],
+     layersCheckboxChanged: null,
+     layersBoolean: []
    }
   },
   methods: {
@@ -69,12 +75,12 @@ export default {
       if(!itemObject)
         return
       this.url = itemObject.url
-      console.log(itemObject)
       //this.$emit(changed_item_on, itemObject)
     },
     cancel() {
       this.item = ''
       this.url = ''
+      this.wmsLayersFromGetCapabilities = []
     },
     async search() {
       if (this.url =='')
@@ -82,22 +88,30 @@ export default {
       let iri = this.$store.state.facadeOL.normalizedUrlWMSCapabilities(this.url)
       try {
           const response = await axios.get(iri)
-          this.wmsLayers = this.$store.state.facadeOL.getWMSLayers(response.data);
+          this.wmsLayersFromGetCapabilities = this.$store.state.facadeOL.getWMSLayers(response.data);
+          for (let i = 0; i++; i <= this.wmsLayersFromGetCapabilities.length)
+            this.layersBoolean[i] = false
 
-        } catch (e) {
-          console.log("Houve algum erro durante a requisição")
+      } catch (e) {
           this.errors.push(e)
-          console.log(this.errors);
-        }
+          console.log("Houve algum erro durante a requisição. " + this.errors);
+      }
     },
-    layerCheckboxClicked(a_layer) {
-      console.log(this.selectedLayers);
+    layerSwitchClicked(index) {
+      let layer = this.wmsLayersFromGetCapabilities[index]
+      if (!layer.was_requested)
+        this.$store.state.facadeOL.addWMSLayer(layer)
+      else
+        this.$store.state.facadeOL.removeWMSLayer(layer)
+
+      layer.was_requested = !layer.was_requested
       //console.log(this.selectedLayers);
     }
   },
   mounted() {
     this.itemsName = this.items.map(item => item.name)
   }
+
 }
 </script>
 <style scoped>
