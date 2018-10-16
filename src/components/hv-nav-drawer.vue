@@ -23,12 +23,9 @@
           <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
           <v-divider></v-divider>
           <basic-list-wms  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-wms>
+          <basic-list-hyper-resource  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-hyper-resource>
           <v-divider></v-divider>
-          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
-          <v-divider></v-divider>
-          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
-          <v-divider></v-divider>
-          <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
+
           <v-divider></v-divider>
   </v-navigation-drawer>
   </div>
@@ -36,9 +33,10 @@
 <script>
   import BasicListRadioButton from './basic/BasicListRadioButton'
   import BasicListWms from './basic/BasicListWms'
+  import BasicListHyperResource from './basic/BasicListHyperResource'
   export default {
     name: 'hv-nav-drawer',
-    components: { BasicListRadioButton, BasicListWms },
+    components: { BasicListRadioButton, BasicListWms, BasicListHyperResource },
     data () {
       return {
         drawer: true,

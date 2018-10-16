@@ -82,12 +82,7 @@ export class FacadeOL {
     }
     // Ends - These operations above are related to the baselayer
     // Begins - These operations are related to the WMS
-    normalizedUrlWMSCapabilities(url) {
-      let id = url.toUpperCase().indexOf('GetCapabilities'.toUpperCase())
-      if (id == -1)
-        return url + '?service=wms&request=GetCapabilities'
-      return url
-    }
+    
     getWMSCapabilitiesAsJSON(resquestedXml) {
       let  parser = new WMSCapabilities()
       return parser.read(resquestedXml)
