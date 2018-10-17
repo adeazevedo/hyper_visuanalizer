@@ -3,7 +3,7 @@
     <v-list-group>
       <v-list-tile slot="activator">
           <v-list-tile-avatar>
-            <v-icon color=green>{{icon_name}}</v-icon>
+            <v-icon color=brown>{{icon_name}}</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{title}}</v-list-tile-title>
@@ -11,12 +11,14 @@
       </v-list-tile>
       <v-list-tile>
           <v-list-tile-content>
-            <v-select  class="elevation-0" :items="items" v-model="item" item-text= "name" hint="hint"  @change="onChange"  box single-line dense ></v-select>
+
+              <v-select  slot="activator" class="elevation-0" :items="items" v-model="item" item-text= "name" hint="item.title"  @change="onChange"    box single-line dense ></v-select>
+
           </v-list-tile-content>
        </v-list-tile>
        <v-list-tile>
            <v-list-tile-content>
-             <v-text-field  v-model="url" label="WMS URL"  single-line solo ></v-text-field >
+             <v-text-field  v-model="url" label="API URL"  single-line solo ></v-text-field >
            </v-list-tile-content>
            <v-list-tile-content>
                <v-btn icon :disabled="url==''" @click.stop="search" >
@@ -97,16 +99,27 @@ export default {
       return url
     },
 
-    async getWMSLayersFromGetMap() {
-    },
-    async getWMSLayersFromGetCapabilities() {
-      let iri = this.normalizedUrlWMSCapabilities(this.url)
-      try {
-          const response = await axios.get(iri)
-          this.wmsLayersFromGetCapabilities = this.facadeOL().getWMSLayers(response.data);
-          for (let i = 0; i++; i <= this.wmsLayersFromGetCapabilities.length)
-            this.layersBoolean[i] = false
+    isEntryPoint(headers) {
 
+      let id = headers.link.toUpperCase().indexOf('rel="http://schema.org/EntryPoint"'.toUpperCase())
+      console.log(id);
+      return id != -1
+    },
+
+    getLayersFromEntryPoint(json_name_url) {
+      console.log(json_name_url);
+    },
+    getLayerFromHyperResourceURL() {
+
+    },
+    async getLayersFromHyperResourceAPI() {
+
+      try {
+          const response = await axios.get(this.url)
+          if (this.isEntryPoint(response.headers))
+            this.getLayersFromEntryPoint(response.data)
+          else
+            this.getLayerFromHyperResourceURL(response.data)
       } catch (e) {
           this.errors.push(e)
           console.log("Houve algum erro durante a requisição. " + this.errors);
@@ -114,12 +127,8 @@ export default {
     },
     async search() {
       let iri = null
-      if (this.url =='')
-        return
-      if (this.isWMSGetMap(this.url))
-        return this.$store.state.facadeOL.addWMSLayer(layer)
-       else
-        return this.getWMSLayersFromGetCapabilities()
+      this.getLayersFromHyperResourceAPI()
+      return this.$store.state.facadeOL.addWMSLayer(layer)
 
     },
     layerSwitchClicked(index) {
