@@ -1,3 +1,4 @@
+import {transformExtent} from 'ol/proj'
 export class OptionsLayer {
 
   constructor(supportedProperties, supportedOperations, context,  iriTemplate) {
@@ -28,16 +29,22 @@ class AbstractLayerResource {
 export class GeoHyperLayerResource extends AbstractLayerResource {
 }
 
-export class WMSLayer extends AbstractLayerResource{
+export class WMSLayer extends AbstractLayerResource {
 
-  constructor(obj) {
-    if (obj != null) {
-      super()
-      this.json = obj.json;
-      this.url = obj.url;
-      this.options_response = obj.options_response;
-      this.vector_layer = obj.vector_layer;
-      this.options_layer = [];
+  constructor(layerFromGetCapability,wms_version, wms_online_resource) {
+    if (layerFromGetCapability != null) {
+      super(null,layerFromGetCapability.url, layerFromGetCapability.Name)
+      this.name = layerFromGetCapability.Name
+      this.title = layerFromGetCapability.Title
+      this.metadata = layerFromGetCapability.MetadataURL
+      this.version = wms_version
+      this.entryPoint = wms_online_resource
+      this.was_requested = false
+      this.crsName= layerFromGetCapability.CRS[0] // NÃO ESTÁ FUNCIONANDO PARA EPSG:4674 => FORÇADO PARA 'EPSG:4326'
+      let extent = layerFromGetCapability.EX_GeographicBoundingBox
+      let bbox = transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
+      this.bbox = bbox
+      this.layer = null
     }
 
     else {

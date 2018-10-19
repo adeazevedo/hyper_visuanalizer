@@ -33,10 +33,10 @@
         <v-list-tile v-for="(layer, index) in wmsLayersFromGetCapabilities" :key="index" >
               <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
           <v-list-tile-action>
-            <v-switch  @click.native="layerSwitchClicked(index)"  v-model="layersBoolean[index]" :disabled="layersBoolean[index]" color="cyan"/></v-switch>
+            <v-switch  @click.native="layerSwitchClicked(layer)"  v-model="layersBoolean[index]" :disabled="layersBoolean[index]" color="cyan"/></v-switch>
           </v-list-tile-action>
           <v-list-tile-content>
-            {{layer.title}}
+            {{layer.name}}
             <!--<v-checkbox  @click="layerCheckboxClicked(layer)" :value="layer" :label="layer.name"></v-checkbox>-->
           </v-list-tile-content>
         </v-list-tile>
@@ -98,6 +98,7 @@ export default {
     },
 
     async getWMSLayersFromGetMap() {
+
     },
     async getWMSLayersFromGetCapabilities() {
       let iri = this.normalizedUrlWMSCapabilities(this.url)
@@ -109,28 +110,27 @@ export default {
 
       } catch (e) {
           this.errors.push(e)
-          console.log("Houve algum erro durante a requisição. " + this.errors);
+          console.log("getWMSLayersFromGetCapabilities.Houve algum erro durante a requisição. " + this.errors);
       }
+    },
+    facadeOL() {
+      return this.$store.state.facadeOL
     },
     async search() {
       let iri = null
       if (this.url =='')
         return
       if (this.isWMSGetMap(this.url))
-        return this.$store.state.facadeOL.addWMSLayer(layer)
+        return this.facadeOL().addWMSLayer(layer)
        else
         return this.getWMSLayersFromGetCapabilities()
 
     },
-    layerSwitchClicked(index) {
-      let layer = this.wmsLayersFromGetCapabilities[index]
-      if (!layer.was_requested)
-        this.$store.state.facadeOL.addWMSLayer(layer)
-      else
-        this.$store.state.facadeOL.removeWMSLayer(layer)
+    layerSwitchClicked(layer) {
+      console.log(layer);
+      let wms_layer = this.facadeOL().addWMSLayer(layer)
+      this.$store.commit('addLayerResource', wms_layer)
 
-      layer.was_requested = !layer.was_requested
-      //console.log(this.selectedLayers);
     }
   },
   mounted() {

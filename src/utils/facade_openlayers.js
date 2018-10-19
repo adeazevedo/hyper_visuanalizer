@@ -14,28 +14,8 @@ import {transformExtent} from 'ol/proj'
 import Stroke from 'ol/style/Stroke'
 import Graticule from 'ol/Graticule'
 import axios from 'axios';
-export class WMSLayer {
-  constructor(ogcWMSLayer, wms_version, wms_online_resource, layer_was_requested=false) {
-    this.name = ogcWMSLayer.Name
-    this.title = ogcWMSLayer.Title
-    this.metadata = ogcWMSLayer.MetadataURL
-    this.version = wms_version
-    this.entryPoint = wms_online_resource
-    this.was_requested = layer_was_requested
-    this.crsName= ogcWMSLayer.CRS[0] // NÃO ESTÁ FUNCIONANDO PARA EPSG:4674 => FORÇADO PARA 'EPSG:4326'
-    let extent = ogcWMSLayer.EX_GeographicBoundingBox
-    let bbox = transformExtent(extent, 'EPSG:4326', 'EPSG:3857')
-    this.bbox = bbox
-    this.olLayer = null
-  }
-}
+import { WMSLayer} from './LayerResource'
 
-export class HyperResourceLayer {
-  constructor(a_name, an_iri) {
-    this.name = a_name
-    this.iri  = an_iri
-  }
-}
 export class FacadeOL {
     constructor(id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
       this.map = new Map({ target: id_map});
@@ -89,7 +69,6 @@ export class FacadeOL {
         return
       this.currentBaseLayer = this.baseLayer(a_baseLayer_name)
       this.map.addLayer(this.currentBaseLayer)
-      console.log(this.currentBaseLayer);
       this.currentBaseLayer.setZIndex(0);
     }
     // Ends - These operations above are related to the baselayer
@@ -110,7 +89,7 @@ export class FacadeOL {
     addWMSLayer(wmsLayer) {
       let image_layer = this.getWMSMap(wmsLayer)
       this.map.addLayer(image_layer)
-      wmsLayer.olLayer = image_layer
+      wmsLayer.layer = image_layer
       return wmsLayer
     }
     removeWMSLayer(wmsLayer) {

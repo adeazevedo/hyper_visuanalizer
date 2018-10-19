@@ -137,8 +137,6 @@ export default {
           this.errors.push(e)
           console.log("Houve algum erro durante a requisição. " + this.errors);
       }
-      //return this.facadeOL().addWMSLayer(layer)
-
     },
     async addHyperResourceLayer(a_HyperResourceLayer) {
       let resp_get
