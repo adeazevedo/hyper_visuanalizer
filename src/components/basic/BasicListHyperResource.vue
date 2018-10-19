@@ -71,18 +71,27 @@ export default {
      url: '',
      errors: [],
      layersFromGeoHyperEntryPoint: [],
-     selectedLayers: [],
-     layersCheckboxChanged: null,
      layersBoolean: []
 
    }
   },
   methods: {
+    async request_get(url) {
+      let iri = null
+      try {
+          const response = await axios.get(url)
+          return response
+
+      } catch (e) {
+          this.errors.push(e)
+          console.log("Houve algum erro durante a requisição. " + this.errors);
+      }
+    },
     clickedOnInfoLayer(a_layer) {
       console.log(a_layer);
     },
     onChange(anItem) {
-      let changed_item_on = "changed-items-on-list-checkbox"
+      //let changed_item_on = "changed-items-on-list-checkbox"
       let idx = this.itemsName.indexOf(this.item)
       let itemObject = this.items[idx]
       if(!itemObject)
@@ -98,25 +107,25 @@ export default {
     facadeOL() {
         return this.$store.state.facadeOL
     },
-
     isEntryPoint(headers) {
       let id = headers.link.toUpperCase().indexOf('rel="http://schema.org/EntryPoint"'.toUpperCase())
       return id != -1
     },
-
     getLayersFromEntryPoint(json_name_url) {
       for (let property in json_name_url) {
-          let hyper_layer = { name: property, iri: json_name_url[property], was_requested: false}
-          this.layersFromGeoHyperEntryPoint.push(hyper_layer)
+          let name_iri_boolean_object = { name: property, iri: json_name_url[property], was_requested: false}
+          this.layersFromGeoHyperEntryPoint.push(name_iri_boolean_object)
           this.layersBoolean.push(false)
       }
     },
     updateLayerFromHyperResourceURL(response) {
-    let  vector_layer_ol =  this.facadeOL().addVectorLayerFromGeoJSON(response.data)
-    let  geo_hyper_layer = new GeoHyperLayerResource(vector_layer_ol, this.url, null )
-         this.$store.commit('addLayerResource', geo_hyper_layer)
+      let  vector_layer_ol =  this.facadeOL().addVectorLayerFromGeoJSON(response.data)
+      let  geo_hyper_layer = new GeoHyperLayerResource(vector_layer_ol, this.url, null )
+      this.$store.commit('addLayerResource', geo_hyper_layer)
     },
-    async getLayersFromHyperResourceAPI() {
+
+    async search() {
+      let iri = null
       try {
           const response = await axios.get(this.url)
           if (this.isEntryPoint(response.headers))
@@ -128,10 +137,6 @@ export default {
           this.errors.push(e)
           console.log("Houve algum erro durante a requisição. " + this.errors);
       }
-    },
-    async search() {
-      let iri = null
-      this.getLayersFromHyperResourceAPI()
       //return this.facadeOL().addWMSLayer(layer)
 
     },
@@ -146,15 +151,10 @@ export default {
       }
 
     },
-    layerSwitchClicked(a_HyperResourceLayer) {
+    async layerSwitchClicked(name_iri_boolean_object) {
+      let response = await this.request_get(name_iri_boolean_object.iri)
+      this.updateLayerFromHyperResourceURL(response)
 
-      if (!a_HyperResourceLayer.was_requested)
-        this.addHyperResourceLayer(a_HyperResourceLayer)
-      else
-        this.facadeOL().removeHyperResourceLayer(a_HyperResourceLayer)
-
-      a_HyperResourceLayer.was_requested = !a_HyperResourceLayer.was_requested
-      //console.log(this.selectedLayers);
     }
   },
   mounted() {

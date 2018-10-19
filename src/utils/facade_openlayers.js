@@ -89,10 +89,11 @@ export class FacadeOL {
         return
       this.currentBaseLayer = this.baseLayer(a_baseLayer_name)
       this.map.addLayer(this.currentBaseLayer)
+      console.log(this.currentBaseLayer);
+      this.currentBaseLayer.setZIndex(0);
     }
     // Ends - These operations above are related to the baselayer
     // Begins - These operations are related to the WMS
-
     getWMSCapabilitiesAsJSON(resquestedXml) {
       let  parser = new WMSCapabilities()
       return parser.read(resquestedXml)
@@ -124,7 +125,7 @@ export class FacadeOL {
       graticule.setMap(this.map)
     }
 
-    // Begin  - These operations are related to the HyperResource
+    // Begin  -  HyperResource related operations
     createHyperResourceLayer(name, iri) {
       return new HyperResourceLayer(name, iri);
     }
@@ -136,16 +137,13 @@ export class FacadeOL {
       return vector_layer
     }
     async addHyperResourceLayer(a_HyperResourceLayer) {
-
       let resp_get
-      console.log(a_HyperResourceLayer);
       try {
          resp_get = await axios.get(a_HyperResourceLayer.iri)
       }
       catch(err) {
         console.log('Houve algum erro na requisição. ', err)
       }
-      //const vectorLayer = await loadVectorLayer(url, this.map.getView().getProjection(), operation_name)
       const gjson_format = new GeoJSON().readFeatures(resp_get.data, {featureProjection: this.map.getView().getProjection()})
       const vector_source = new Vector({features: gjson_format})
       const vector_layer = new VectorLayer({ source: vector_source })
