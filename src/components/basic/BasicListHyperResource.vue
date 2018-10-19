@@ -3,7 +3,7 @@
     <v-list-group>
       <v-list-tile slot="activator">
           <v-list-tile-avatar>
-            <v-icon color=brown>{{icon_name}}</v-icon>
+            <v-icon color="brown darken-1">{{icon_name}}</v-icon>
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{title}}</v-list-tile-title>
@@ -11,14 +11,12 @@
       </v-list-tile>
       <v-list-tile>
           <v-list-tile-content>
-
               <v-select  slot="activator" class="elevation-0" :items="items" v-model="item" item-text= "name" hint="item.title"  @change="onChange"    box single-line dense ></v-select>
-
           </v-list-tile-content>
        </v-list-tile>
        <v-list-tile>
            <v-list-tile-content>
-             <v-text-field  v-model="url" label="API URL"  single-line solo ></v-text-field >
+             <v-text-field  v-model="url" label="Enter with URL " @keyup.enter="search" single-line dense ></v-text-field >
            </v-list-tile-content>
            <v-list-tile-content>
                <v-btn icon :disabled="url==''" @click.stop="search" >
@@ -31,14 +29,16 @@
                 </v-btn>
            </v-list-tile-content>
         </v-list-tile>
-
-        <v-list-tile v-for="(layer, index) in wmsLayersFromGetCapabilities" :key="index" >
+        <v-list-tile v-for="(layer, index) in layersFromGeoHyperEntryPoint" :key="index" >
               <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
           <v-list-tile-action>
-            <v-switch  @click.native="layerSwitchClicked(index)"  v-model="layersBoolean[index]"  color="cyan"/></v-switch>
+            <v-btn slot="activator" @click.stop="clickedOnInfoLayer(layer)" icon><v-icon color="blue">info</v-icon></v-btn>
+          </v-list-tile-action>
+          <v-list-tile-action>
+            <v-switch  @click.native="layerSwitchClicked(layer)"  v-model="layersBoolean[index]"  color="cyan" :disabled="layersBoolean[index]" /></v-switch>
           </v-list-tile-action>
           <v-list-tile-content>
-            {{layer.title}}
+            {{layer.name}}
             <!--<v-checkbox  @click="layerCheckboxClicked(layer)" :value="layer" :label="layer.name"></v-checkbox>-->
           </v-list-tile-content>
         </v-list-tile>
@@ -47,6 +47,13 @@
 </template>
 <script>
 import axios from 'axios';
+import { GeoHyperLayerResource } from '../../utils/LayerResource'
+export class HyperResourceLayer {
+  constructor(a_name, an_iri) {
+    this.name = a_name
+    this.iri  = an_iri
+  }
+}
 
 export default {
   props: {
@@ -63,13 +70,17 @@ export default {
      item: '',
      url: '',
      errors: [],
-     wmsLayersFromGetCapabilities: [],
+     layersFromGeoHyperEntryPoint: [],
      selectedLayers: [],
      layersCheckboxChanged: null,
      layersBoolean: []
+
    }
   },
   methods: {
+    clickedOnInfoLayer(a_layer) {
+      console.log(a_layer);
+    },
     onChange(anItem) {
       let changed_item_on = "changed-items-on-list-checkbox"
       let idx = this.itemsName.indexOf(this.item)
@@ -82,44 +93,37 @@ export default {
     cancel() {
       this.item = ''
       this.url = ''
-      this.wmsLayersFromGetCapabilities = []
+      this.layersFromGeoHyperEntryPoint = []
     },
     facadeOL() {
         return this.$store.state.facadeOL
     },
 
-    isWMSGetMap(url) {
-      let parsed_url = url.replace(/\s+/g, '')
-      return  parsed_url.toUpperCase().indexOf('request=GetMap'.toUpperCase()) != -1
-    },
-    normalizedUrlWMSCapabilities(url) {
-      let id = url.toUpperCase().indexOf('GetCapabilities'.toUpperCase())
-      if (id == -1)
-        return url + '?service=wms&request=GetCapabilities'
-      return url
-    },
-
     isEntryPoint(headers) {
-
       let id = headers.link.toUpperCase().indexOf('rel="http://schema.org/EntryPoint"'.toUpperCase())
-      console.log(id);
       return id != -1
     },
 
     getLayersFromEntryPoint(json_name_url) {
-      console.log(json_name_url);
+      for (let property in json_name_url) {
+          let hyper_layer = { name: property, iri: json_name_url[property], was_requested: false}
+          this.layersFromGeoHyperEntryPoint.push(hyper_layer)
+          this.layersBoolean.push(false)
+      }
     },
-    getLayerFromHyperResourceURL() {
-
+    updateLayerFromHyperResourceURL(response) {
+    let  vector_layer_ol =  this.facadeOL().addVectorLayerFromGeoJSON(response.data)
+    let  geo_hyper_layer = new GeoHyperLayerResource(vector_layer_ol, this.url, null )
+         this.$store.commit('addLayerResource', geo_hyper_layer)
     },
     async getLayersFromHyperResourceAPI() {
-
       try {
           const response = await axios.get(this.url)
           if (this.isEntryPoint(response.headers))
-            this.getLayersFromEntryPoint(response.data)
+             this.getLayersFromEntryPoint(response.data)
           else
-            this.getLayerFromHyperResourceURL(response.data)
+             this.updateLayerFromHyperResourceURL(response)
+
       } catch (e) {
           this.errors.push(e)
           console.log("Houve algum erro durante a requisição. " + this.errors);
@@ -128,17 +132,28 @@ export default {
     async search() {
       let iri = null
       this.getLayersFromHyperResourceAPI()
-      return this.$store.state.facadeOL.addWMSLayer(layer)
+      //return this.facadeOL().addWMSLayer(layer)
 
     },
-    layerSwitchClicked(index) {
-      let layer = this.wmsLayersFromGetCapabilities[index]
-      if (!layer.was_requested)
-        this.$store.state.facadeOL.addWMSLayer(layer)
-      else
-        this.$store.state.facadeOL.removeWMSLayer(layer)
+    async addHyperResourceLayer(a_HyperResourceLayer) {
+      let resp_get
+      try {
+               resp_get = await axios.get(a_HyperResourceLayer.iri)
+               this.facadeOL().addVectorLayerFromGeoJSON(resp_get.data)
+      }
+      catch(err) {
+              console.log('Houve algum erro na requisição. ', err)
+      }
 
-      layer.was_requested = !layer.was_requested
+    },
+    layerSwitchClicked(a_HyperResourceLayer) {
+
+      if (!a_HyperResourceLayer.was_requested)
+        this.addHyperResourceLayer(a_HyperResourceLayer)
+      else
+        this.facadeOL().removeHyperResourceLayer(a_HyperResourceLayer)
+
+      a_HyperResourceLayer.was_requested = !a_HyperResourceLayer.was_requested
       //console.log(this.selectedLayers);
     }
   },

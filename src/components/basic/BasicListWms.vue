@@ -16,7 +16,7 @@
        </v-list-tile>
        <v-list-tile>
            <v-list-tile-content>
-             <v-text-field  v-model="url" label="WMS URL"  single-line solo ></v-text-field >
+             <v-text-field  v-model="url" label="Enter WMS URL"  @keyup.enter="search" single-line solo ></v-text-field >
            </v-list-tile-content>
            <v-list-tile-content>
                <v-btn icon :disabled="url==''" @click.stop="search" >
@@ -33,7 +33,7 @@
         <v-list-tile v-for="(layer, index) in wmsLayersFromGetCapabilities" :key="index" >
               <!--<v-checkbox  @click.prevent="layerCheckboxClicked" :label="layer.name"></v-checkbox>-->
           <v-list-tile-action>
-            <v-switch  @click.native="layerSwitchClicked(index)"  v-model="layersBoolean[index]"  color="cyan"/></v-switch>
+            <v-switch  @click.native="layerSwitchClicked(index)"  v-model="layersBoolean[index]" :disabled="layersBoolean[index]" color="cyan"/></v-switch>
           </v-list-tile-action>
           <v-list-tile-content>
             {{layer.title}}

@@ -6,10 +6,14 @@ import OSM from 'ol/source/XYZ'
 import TileImage from 'ol/source/TileImage'
 import ImageLayer from 'ol/layer/Image'
 import ImageWMS from 'ol/source/ImageWMS'
+import Vector from 'ol/source/Vector'
+import GeoJSON from 'ol/format/GeoJSON'
+import VectorLayer from 'ol/layer/Vector'
 import WMSCapabilities from 'ol/format/WMSCapabilities'
 import {transformExtent} from 'ol/proj'
 import Stroke from 'ol/style/Stroke'
 import Graticule from 'ol/Graticule'
+import axios from 'axios';
 export class WMSLayer {
   constructor(ogcWMSLayer, wms_version, wms_online_resource, layer_was_requested=false) {
     this.name = ogcWMSLayer.Name
@@ -26,6 +30,12 @@ export class WMSLayer {
   }
 }
 
+export class HyperResourceLayer {
+  constructor(a_name, an_iri) {
+    this.name = a_name
+    this.iri  = an_iri
+  }
+}
 export class FacadeOL {
     constructor(id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
       this.map = new Map({ target: id_map});
@@ -82,7 +92,7 @@ export class FacadeOL {
     }
     // Ends - These operations above are related to the baselayer
     // Begins - These operations are related to the WMS
-    
+
     getWMSCapabilitiesAsJSON(resquestedXml) {
       let  parser = new WMSCapabilities()
       return parser.read(resquestedXml)
@@ -93,7 +103,6 @@ export class FacadeOL {
       return layers.map((a_layer) => new WMSLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
     }
     getWMSMap(wmsLayer) {
-      console.log(wmsLayer);
       let wmsSource = new ImageWMS({url: wmsLayer.entryPoint +'/wms', params: {'LAYERS': wmsLayer.name}})
       return new ImageLayer({extent: wmsLayer.bbox, source: wmsSource})
     }
@@ -115,5 +124,34 @@ export class FacadeOL {
       graticule.setMap(this.map)
     }
 
-    //
+    // Begin  - These operations are related to the HyperResource
+    createHyperResourceLayer(name, iri) {
+      return new HyperResourceLayer(name, iri);
+    }
+    addVectorLayerFromGeoJSON(geoJson) {
+      const gjson_format = new GeoJSON().readFeatures(geoJson, {featureProjection: this.map.getView().getProjection()})
+      const vector_source = new Vector({features: gjson_format})
+      const vector_layer = new VectorLayer({ source: vector_source })
+      this.map.addLayer(vector_layer)
+      return vector_layer
+    }
+    async addHyperResourceLayer(a_HyperResourceLayer) {
+
+      let resp_get
+      console.log(a_HyperResourceLayer);
+      try {
+         resp_get = await axios.get(a_HyperResourceLayer.iri)
+      }
+      catch(err) {
+        console.log('Houve algum erro na requisição. ', err)
+      }
+      //const vectorLayer = await loadVectorLayer(url, this.map.getView().getProjection(), operation_name)
+      const gjson_format = new GeoJSON().readFeatures(resp_get.data, {featureProjection: this.map.getView().getProjection()})
+      const vector_source = new Vector({features: gjson_format})
+      const vector_layer = new VectorLayer({ source: vector_source })
+      this.map.addLayer(vector_layer)
+
+    }
+    removeHyperResourceLayer(a_HyperResourceLayer) {}
+    // End  - These operations are related to the HyperResource
 }

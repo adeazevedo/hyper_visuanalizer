@@ -3,7 +3,7 @@
     <v-list-group no-action>
         <v-list-tile slot="activator">
             <v-list-tile-avatar>
-              <v-icon color=blue>{{icon_name}}</v-icon>
+              <v-icon color="blue-grey">{{icon_name}}</v-icon>
             </v-list-tile-avatar>
             <v-list-tile-content>
               <v-list-tile-title>{{title}}</v-list-tile-title>

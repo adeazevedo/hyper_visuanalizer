@@ -22,11 +22,14 @@
           <v-divider></v-divider>
           <basic-list-radio-button  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged v-bind:items="baseLayersRadio"  icon_name="layers" title="Camada base"></basic-list-radio-button>
           <v-divider></v-divider>
-          <basic-list-wms  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Serviço WMS por instituições"></basic-list-wms>
-          <basic-list-hyper-resource  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="geoHyperEntryPoint"  icon_name="layers" title="API Geo-hyper por instituições"></basic-list-hyper-resource>
           <v-divider></v-divider>
+          <basic-list-hyper-resource  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='' v-bind:items="geoHyperEntryPoint"  icon_name="layers" title="API hipercamadas"></basic-list-hyper-resource>
+          <v-divider></v-divider>
+          <basic-list-wms  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Geoserviços WMS"></basic-list-wms>
+          <v-divider></v-divider>
+          <list-resource icon_name="layers" title="Camadas selecionadas"></list-resource>
 
-          <v-divider></v-divider>
+
   </v-navigation-drawer>
   </div>
 </template>
@@ -34,9 +37,10 @@
   import BasicListRadioButton from './basic/BasicListRadioButton'
   import BasicListWms from './basic/BasicListWms'
   import BasicListHyperResource from './basic/BasicListHyperResource'
+  import ListResource from './ListResource'
   export default {
     name: 'hv-nav-drawer',
-    components: { BasicListRadioButton, BasicListWms, BasicListHyperResource },
+    components: { BasicListRadioButton, BasicListWms, BasicListHyperResource, ListResource },
     data () {
       return {
         drawer: true,
