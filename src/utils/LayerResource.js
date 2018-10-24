@@ -28,8 +28,8 @@ class AbstractLayerResource {
 
 export class GeoHyperLayerResource extends AbstractLayerResource {
 }
-
-export class WMSLayer extends AbstractLayerResource {
+//This class adresses the Layer in the GetCapabilities from WMS
+export class WMSCapabilityLayer extends AbstractLayerResource {
 
   constructor(layerFromGetCapability,wms_version, wms_online_resource) {
     if (layerFromGetCapability != null) {

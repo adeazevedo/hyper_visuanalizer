@@ -14,7 +14,7 @@ import {transformExtent} from 'ol/proj'
 import Stroke from 'ol/style/Stroke'
 import Graticule from 'ol/Graticule'
 import axios from 'axios';
-import { WMSLayer} from './LayerResource'
+import { WMSCapabilityLayer} from './LayerResource'
 
 export class FacadeOL {
     constructor(id_map='map', coordinates_center=[-4331024.58685793, -1976355.8033415168], a_zoom_value = 4, a_baseLayer_name='OSM' ) {
@@ -77,10 +77,11 @@ export class FacadeOL {
       let  parser = new WMSCapabilities()
       return parser.read(resquestedXml)
     }
-    getWMSLayers(requestedXml) {
+    getWMSCapabilityLayers(requestedXml) {
       let capability_json = this.getWMSCapabilitiesAsJSON(requestedXml)
       let layers = capability_json.Capability.Layer.Layer
-      return layers.map((a_layer) => new WMSLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
+      console.log(layers);
+      return layers.map((a_layer) => new WMSCapabilityLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
     }
     getWMSMap(wmsLayer) {
       let wmsSource = new ImageWMS({url: wmsLayer.entryPoint +'/wms', params: {'LAYERS': wmsLayer.name}})
