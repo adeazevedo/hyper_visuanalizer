@@ -76,10 +76,11 @@ export default {
    }
   },
   methods: {
-    async request_get(url) {
+    async request(http_method, url) {
       let iri = null
       try {
-          const response = await axios.get(url)
+        console.log(url);
+          const response = await http_method(url)
           return response
 
       } catch (e) {
@@ -125,9 +126,9 @@ export default {
     },
 
     async search() {
-      let iri = null
+
       try {
-          const response = await axios.get(this.url)
+          const response = await this.request(axios.get, this.url)
           if (this.isEntryPoint(response.headers))
              this.getLayersFromEntryPoint(response.data)
           else
@@ -141,7 +142,7 @@ export default {
     async addHyperResourceLayer(a_HyperResourceLayer) {
       let resp_get
       try {
-               resp_get = await axios.get(a_HyperResourceLayer.iri)
+               resp_get = await this.request(axios.get, a_HyperResourceLayer.iri)
                this.facadeOL().addVectorLayerFromGeoJSON(resp_get.data)
       }
       catch(err) {
@@ -150,7 +151,7 @@ export default {
 
     },
     async layerSwitchClicked(name_iri_boolean_object) {
-      let response = await this.request_get(name_iri_boolean_object.iri)
+      let response = await this.request(axios.get, name_iri_boolean_object.iri)
       this.updateLayerFromHyperResourceURL(response)
 
     }

@@ -127,10 +127,10 @@ export default {
         return this.getWMSLayersFromGetCapabilities()
 
     },
-    layerSwitchClicked(layer) {
-      console.log(layer);
-      let wms_layer = this.facadeOL().addWMSLayer(layer)
-      this.$store.commit('addLayerResource', wms_layer)
+    layerSwitchClicked(layer_from_capabilities) {
+
+      let wms_layer_from_capabilities = this.facadeOL().addWMSLayer(layer_from_capabilities)
+      this.$store.commit('addLayerResource', wms_layer_from_capabilities)
 
     }
   },

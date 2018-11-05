@@ -80,7 +80,7 @@ export class FacadeOL {
     getWMSCapabilityLayers(requestedXml) {
       let capability_json = this.getWMSCapabilitiesAsJSON(requestedXml)
       let layers = capability_json.Capability.Layer.Layer
-      console.log(layers);
+      
       return layers.map((a_layer) => new WMSCapabilityLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
     }
     getWMSMap(wmsLayer) {
