@@ -43,7 +43,10 @@
           </v-list-tile-content>
         </v-list-tile>
     </v-list-group>
+    
   </v-list>
+  
+  
 </template>
 <script>
 import axios from 'axios';
@@ -71,7 +74,8 @@ export default {
      url: '',
      errors: [],
      layersFromGeoHyperEntryPoint: [],
-     layersBoolean: []
+     layersBoolean: [],
+     dialog: false
 
    }
   },
@@ -88,8 +92,10 @@ export default {
           console.log("Houve algum erro durante a requisição. " + this.errors);
       }
     },
-    clickedOnInfoLayer(a_layer) {
-      console.log(a_layer);
+    async clickedOnInfoLayer(a_layer) {
+      const response = await this.request(axios.options, a_layer.iri)
+      this.dialog = true
+      console.log(response.data)
     },
     onChange(anItem) {
       //let changed_item_on = "changed-items-on-list-checkbox"
@@ -113,11 +119,12 @@ export default {
       return id != -1
     },
     getLayersFromEntryPoint(json_name_url) {
-      for (let property in json_name_url) {
-          let name_iri_boolean_object = { name: property, iri: json_name_url[property], was_requested: false}
+     
+      Object.entries(json_name_url).forEach(entry => {
+          let name_iri_boolean_object = { name: entry[0], iri: entry[1], was_requested: false}
           this.layersFromGeoHyperEntryPoint.push(name_iri_boolean_object)
           this.layersBoolean.push(false)
-      }
+      })
     },
     updateLayerFromHyperResourceURL(response) {
       let  vector_layer_ol =  this.facadeOL().addVectorLayerFromGeoJSON(response.data)
@@ -127,17 +134,11 @@ export default {
 
     async search() {
 
-      try {
           const response = await this.request(axios.get, this.url)
           if (this.isEntryPoint(response.headers))
              this.getLayersFromEntryPoint(response.data)
           else
              this.updateLayerFromHyperResourceURL(response)
-
-      } catch (e) {
-          this.errors.push(e)
-          console.log("Houve algum erro durante a requisição. " + this.errors);
-      }
     },
     async addHyperResourceLayer(a_HyperResourceLayer) {
       let resp_get
