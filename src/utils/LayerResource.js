@@ -1,11 +1,12 @@
 import {transformExtent} from 'ol/proj'
 export class OptionsLayer {
 
-  constructor(supportedProperties, supportedOperations, context,  iriTemplate) {
+  constructor(supportedProperties, supportedOperations, context,  iriTemplate, iri) {
     this.supporte_properties = supportedProperties;
     this.supported_operations = supportedOperations.sort((a,b) => a['hydra:operation'] < b['hydra:operation'] ? -1 : 1);
     this.context = context;
     this.iri_template = iriTemplate;
+    this.iri = iri
   }
 }
 class AbstractLayerResource {

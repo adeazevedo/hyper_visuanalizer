@@ -28,16 +28,17 @@
           <basic-list-wms  v-on:changed-item-on-list-radio-button=baseLayersRadioChanged hint='Escolha a instituição para apresentar camadas' v-bind:items="registeredWMSCapability"  icon_name="layers" title="Geoserviços WMS"></basic-list-wms>
           <v-divider></v-divider>
           <list-resource icon_name="layers" title="Camadas selecionadas"></list-resource>
-
+          
 
   </v-navigation-drawer>
   </div>
 </template>
 <script>
   import BasicListRadioButton from './basic/BasicListRadioButton'
-  import BasicListWms from './basic/BasicListWms'
-  import BasicListHyperResource from './basic/BasicListHyperResource'
+  import BasicListWms from './BasicListWms'
+  import BasicListHyperResource from './BasicListHyperResource'
   import ListResource from './ListResource'
+  
   export default {
     name: 'hv-nav-drawer',
     components: { BasicListRadioButton, BasicListWms, BasicListHyperResource, ListResource },
@@ -46,6 +47,7 @@
         drawer: true,
         icon_btn: 'chevron_right',
         btn_color: 'green',
+        
         items: [
           { title: 'Camadas base', icon: 'dashboard' },
           { title: 'Sobre', icon: 'question_answer' }

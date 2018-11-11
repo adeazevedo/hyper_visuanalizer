@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-list class="pa-0 ma-0">
     <v-list-group>
       <v-list-tile slot="activator">
@@ -16,7 +17,7 @@
        </v-list-tile>
        <v-list-tile>
            <v-list-tile-content>
-             <v-text-field  v-model="url" label="Enter with URL " @keyup.enter="search" single-line dense ></v-text-field >
+             <v-text-field  v-model="url"  label="Enter with URL " @keyup.enter="search" solo single-line dense ></v-text-field >
            </v-list-tile-content>
            <v-list-tile-content>
                <v-btn icon :disabled="url==''" @click.stop="search" >
@@ -45,12 +46,15 @@
     </v-list-group>
     
   </v-list>
-  
-  
+  <v-dialog v-model="dialog_options" >
+    <basic-hyper-options v-on:closeDialog="closeDialog" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
+  </v-dialog>
+  </div>
 </template>
 <script>
 import axios from 'axios';
-import { GeoHyperLayerResource } from '../../utils/LayerResource'
+import { GeoHyperLayerResource, OptionsLayer } from '../utils/LayerResource'
+import BasicHyperOptions from './BasicHyperOptions'
 export class HyperResourceLayer {
   constructor(a_name, an_iri) {
     this.name = a_name
@@ -67,6 +71,7 @@ export default {
     hint:{type: String, required: false}
 
   },
+  components: {BasicHyperOptions},
   data() {
    return {
      itemsName: [],
@@ -75,7 +80,9 @@ export default {
      errors: [],
      layersFromGeoHyperEntryPoint: [],
      layersBoolean: [],
-     dialog: false
+     dialog_options: false,
+     optionsLayer: new OptionsLayer([], [], {}, {}),
+     layerName: ''
 
    }
   },
@@ -93,9 +100,13 @@ export default {
       }
     },
     async clickedOnInfoLayer(a_layer) {
+      console.log(a_layer.iri)
       const response = await this.request(axios.options, a_layer.iri)
-      this.dialog = true
-      console.log(response.data)
+      this.dialog_options = true
+      this.layerName = a_layer.name
+      this.optionsLayer = new OptionsLayer(response.data["hydra:supportedProperties"], response.data["hydra:supportedOperations"], response.data["@context"], response.data["hydra:iriTemplate"], a_layer.iri)  //supportedProperties, supportedOperations, context,  iriTemplate
+      console.log(this.optionsLayer )
+      
     },
     onChange(anItem) {
       //let changed_item_on = "changed-items-on-list-checkbox"
@@ -111,6 +122,10 @@ export default {
       this.url = ''
       this.layersFromGeoHyperEntryPoint = []
     },
+    closeDialog(options) {
+      console.log(options)
+      this.dialog_options=false
+    },
     facadeOL() {
         return this.$store.state.facadeOL
     },
@@ -119,7 +134,6 @@ export default {
       return id != -1
     },
     getLayersFromEntryPoint(json_name_url) {
-     
       Object.entries(json_name_url).forEach(entry => {
           let name_iri_boolean_object = { name: entry[0], iri: entry[1], was_requested: false}
           this.layersFromGeoHyperEntryPoint.push(name_iri_boolean_object)
@@ -159,6 +173,9 @@ export default {
   },
   mounted() {
     this.itemsName = this.items.map(item => item.name)
+    this.optionsLayer = new OptionsLayer([], [], {}, {})  //supportedProperties, supportedOperations, context,  iriTemplate
+    console.log(this.optionsLayer)
+    
   }
 
 }
