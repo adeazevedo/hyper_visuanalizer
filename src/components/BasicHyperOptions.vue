@@ -1,78 +1,38 @@
 <template>
-  <v-card>
-    <v-layout row justify-center wrap>
-     
-      <v-flex xs4 >
-        <v-card height=300 >
-          <v-card-text>Atributos</v-card-text>
-                <v-list dense>
-                    <v-list-tile class="atributo-list" v-for="(attribute, index) in Object.keys(optionsLayer.context)" :key="index">
-                      <v-list-tile-action>
-                        <v-tooltip top>
-                          <v-btn slot="activator" @click.stop="clickedOnAttribute(attribute)" icon><v-icon color="blue">help</v-icon></v-btn>
-                        <span>{{optionsLayer.context[attribute]}}</span>
-                        </v-tooltip >  
-                      </v-list-tile-action>
-                      <v-list-tile-content>
-                        {{attribute}}
-                      </v-list-tile-content>
-                      <v-list-tile-action>
-                        <v-tooltip right>
-                          <v-btn slot="activator" @click.stop="clickedOnAmostrar(attribute)" icon><v-icon color="blue">scatter_plot</v-icon></v-btn>
-                          <span>Amostrar</span>
-                        </v-tooltip >  
-                      </v-list-tile-action>
-                    </v-list-tile>
-                </v-list>
-          
-        </v-card>        
-      </v-flex >
-     
-      <v-divider></v-divider>
-      <v-flex xs8 >
-        <v-card >
-         <v-card-text>{{amostra}}</v-card-text>
-          <v-list dense>
-                    <v-list-tile class="atributo-list" v-for="(value, index) in amostragem" :key="index">
-                      <v-list-tile-content >
-                        <span color=black> {{value}} </span>
-                      </v-list-tile-content>
-                    </v-list-tile>
-                </v-list>
-        </v-card>
-        <v-card-text>
-            <v-container grid-list-sm>
-              <v-layout wrap>
-                <v-flex  sm6 md4>
-                  <v-text-field value="Amostragem" readonly ></v-text-field>
-                </v-flex>
-                <v-flex  sm6 md4>
-                  <v-text-field v-model="sample_initial_value" max-width=30 v-on:change="clickedOnAmostrar(attribute_name)"></v-text-field>
-                </v-flex>
-                <v-flex  sm6 md4>
-                  <v-text-field v-model="sample_end_value" v-on:change="clickedOnAmostrar(attribute_name)"></v-text-field>  
-                </v-flex>
-              </v-layout>  
-            </v-container>
-          </v-card-text>
-      </v-flex>
-    </v-layout>
-  </v-card>
+<div>
+     <v-card height=400 >
+      <!--<v-layout row justify-center wrap>-->
+        <v-tabs v-model="active" color="cyan" dark slider-color="yellow" >
+          <v-tab  :key="1"  ripple > Atributos </v-tab>
+          <v-tab  :key="2"  ripple > Operações </v-tab>
+          <v-tab-item  :key="1">
+             <basic-hyper-options-attribute :optionsLayer="optionsLayer" > </basic-hyper-options-attribute>
+          </v-tab-item>
+          <v-tab-item  :key="2">
+              <basic-hyper-options-operation :optionsLayer="optionsLayer" > </basic-hyper-options-operation>
+          </v-tab-item>  
+        </v-tabs>
+     </v-card>   
+  </div>
 </template>
 
 <script>
 import axios from 'axios';
+import BasicHyperOptionsAttribute from './BasicHyperOptionsAttribute'
+import BasicHyperOptionsOperation from './BasicHyperOptionsOperation'
 export default {
   props: {
     name: {type: String, required: false},
     optionsLayer: { type: Object, required: false}, // Items is Array. each Item  is an object => {name: a_name, value: a_value }
     icon_name: {type: String, required: false},
     title: {type: String, required: false},
-    
+   
   },
+   components: {BasicHyperOptionsAttribute, BasicHyperOptionsOperation},
   data() {
    return {
      selectedItem: null,
+     active: null,
      dialog: false,
      attributes: '',
      amostragem: [],
@@ -80,8 +40,6 @@ export default {
      attribute_name: '',
      sample_initial_value: 1,
      sample_end_value: 30,
-
-
    }
   },
   methods: {
@@ -112,6 +70,10 @@ export default {
       console.log(response.data)
       this.amostragem=response.data.map(obj => obj[attribute_name])
     },
+    next() {
+        const active = parseInt(this.active)
+        this.active = (active < 2 ? active + 1 : 0)
+      }
   },
   mounted() {
     this.amostra = this.optionsLayer.iri

@@ -106,6 +106,7 @@ export default {
       this.layerName = a_layer.name
       this.optionsLayer = new OptionsLayer(response.data["hydra:supportedProperties"], response.data["hydra:supportedOperations"], response.data["@context"], response.data["hydra:iriTemplate"], a_layer.iri)  //supportedProperties, supportedOperations, context,  iriTemplate
       console.log(this.optionsLayer )
+      this.dialog_options =true
       
     },
     onChange(anItem) {
