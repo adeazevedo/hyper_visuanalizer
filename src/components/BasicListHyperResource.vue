@@ -44,11 +44,21 @@
           </v-list-tile-content>
         </v-list-tile>
     </v-list-group>
-    
   </v-list>
-  <v-dialog v-model="dialog_options" >
-    <basic-hyper-options v-on:closeDialog="closeDialog" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
-  </v-dialog>
+  <v-layout row justify-center>
+     <v-dialog v-model="dialog_options" >
+      <v-card>
+        <v-card-text>
+          <basic-hyper-options v-on:closeDialog="closeDialog" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn  round @click="dialog_options = false">Ok</v-btn>
+          <v-btn  round @click="dialog_options = false">Cancelar</v-btn>
+        </v-card-actions>
+      </v-card>
+     </v-dialog>
+  </v-layout>
   </div>
 </template>
 <script>
@@ -126,12 +136,13 @@ export default {
     closeDialog(options) {
       console.log(options)
       this.dialog_options=false
+      this.optionsLayer = {}
     },
     facadeOL() {
         return this.$store.state.facadeOL
     },
     isEntryPoint(headers) {
-      let id = headers.link.toUpperCase().indexOf('rel="http://schema.org/EntryPoint"'.toUpperCase())
+      let id = headers.link.toUpperCase().indexOf('://schema.org/EntryPoint"'.toUpperCase())
       return id != -1
     },
     getLayersFromEntryPoint(json_name_url) {
@@ -150,6 +161,7 @@ export default {
     async search() {
 
           const response = await this.request(axios.get, this.url)
+          debugger
           if (this.isEntryPoint(response.headers))
              this.getLayersFromEntryPoint(response.data)
           else

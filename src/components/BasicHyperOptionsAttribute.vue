@@ -3,7 +3,7 @@
        <v-container grid-list-xl fluid>
             <v-layout row wrap >
                 <v-flex xs6>
-                    <v-card>
+                    <v-card class="elevation-12">
                         <v-list dense>
                             <v-list-tile class="atributo-list" v-for="(attribute, index) in Object.keys(optionsLayer.context)" :key="index">
                               <v-list-tile-action>
@@ -35,7 +35,7 @@
                         </v-container>
                     </v-card>
                 </v-flex>
-                      <v-flex xs6>
+                <v-flex  xs6 class="elevation-12">>
                         <v-card >
                           <v-card-text>{{amostra}}</v-card-text>
                           <v-card-text>
@@ -98,8 +98,9 @@ export default {
             this.attribute_name = attribute_name
             this.amostra=this.optionsLayer.iri + "/projection/" + this.attribute_name + "/offset-limit/" + this.sample_initial_value + "&"+ this.sample_end_value
             let response = await this.request(axios.get, this.amostra)
-            console.log(response.data)
+            
             this.amostragem=response.data.map(obj => obj[attribute_name])
+            console.log(this.amostragem)
         },
         next() {
             const active = parseInt(this.active)

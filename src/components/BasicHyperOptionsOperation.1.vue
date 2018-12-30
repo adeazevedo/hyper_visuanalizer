@@ -3,20 +3,19 @@
     <v-expansion-panel-content v-for="operation in optionsLayer.supported_operations">
       <div slot="header">{{operation["hydra:operation"]}}</div>
       <v-card>
-        <v-card-text class="grey lighten-2">Parâmetros esperados: 
+        <v-card-text class="grey lighten-1">Parâmetros esperados: 
             <template v-for="parameter in operation['hydra:expects']">
-                <v-text-field :label="parameter" append-icon="check_circle"   @change="changeParameter"> </v-text-field>
+                <v-text-field label="parameter"> </v-text-field>
             </template>
         </v-card-text> 
         <v-card-text class="grey lighten-2">Retorno da operação: {{operation["hydra:returns"]}}</v-card-text>
-        <v-card-text class="grey lighten-2">Método HTTP: {{operation["hydra:method"]}}</v-card-text> 
+        <v-card-text class="grey lighten-1">Método HTTP: {{operation["hydra:method"]}}</v-card-text> 
         <v-card-text class="grey lighten-2">Descrição da operação em: <a>{{operation["@id"]}} </a></v-card-text> 
-        <v-card-text class="grey lighten-2"><a>{{optionsLayer.iri}}/{{operation["hydra:operation"]}}/{{parameters_str}}</a></v-card-text>
+        <v-card-text class="grey lighten-1"><a>{{optionsLayer.iri }}</a></v-card-text>
       </v-card>
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
-
 <script>
 import axios from 'axios';
 
@@ -30,9 +29,7 @@ export default {
    
     data() {
         return {
-            parameters_str: ''
-            
-        }
+                    }
     },
     methods: {
         async request(http_method, url) {
@@ -51,17 +48,11 @@ export default {
             //let changed_item_on = "changed-item-on-list-radio-button" //_on_" + this.name;
             //this.$emit(changed_item_on, this.selectedItem)
         },
-        changeParameter(value) {
-            if (this.parameters_str == '') 
-                this.parameters_str = value
-            else
-                this.parameters_str += '&' + value
-        },
-            
+        
+        clickedOnOperation(operation_name) {},
        
     },
     mounted() {
-        
     }
 
 }

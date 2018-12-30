@@ -1,6 +1,5 @@
 <template>
-<div>
-     <v-card height=400 >
+    
       <!--<v-layout row justify-center wrap>-->
         <v-tabs v-model="active" color="cyan" dark slider-color="yellow" >
           <v-tab  :key="1"  ripple > Atributos </v-tab>
@@ -12,8 +11,7 @@
               <basic-hyper-options-operation :optionsLayer="optionsLayer" > </basic-hyper-options-operation>
           </v-tab-item>  
         </v-tabs>
-     </v-card>   
-  </div>
+    
 </template>
 
 <script>
