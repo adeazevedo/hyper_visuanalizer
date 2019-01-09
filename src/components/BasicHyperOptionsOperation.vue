@@ -1,16 +1,17 @@
 <template>
   <v-expansion-panel color="black" focusable>
-    <v-expansion-panel-content v-for="operation in optionsLayer.supported_operations">
+    <v-expansion-panel-content v-for="(operation, index) in optionsLayer.supported_operations" :key="index">
       <div slot="header">{{operation["hydra:operation"]}}</div>
       <v-card>
-        <v-card-text class="grey lighten-2">Parâmetros esperados: 
+        <v-card-text class="grey lighten-2">Descrição: </v-card-text>
+        <v-card-text class="grey lighten-2">Semântica da operação em: <a>{{operation["@id"]}} </a></v-card-text>
+        <v-card-text class="grey lighten-2" v-if="(operation['hydra:expects'].length)>0">Parâmetros esperados:
             <template v-for="parameter in operation['hydra:expects']">
                 <v-text-field :label="parameter" append-icon="check_circle"   @change="changeParameter"> </v-text-field>
             </template>
-        </v-card-text> 
+        </v-card-text>
         <v-card-text class="grey lighten-2">Retorno da operação: {{operation["hydra:returns"]}}</v-card-text>
-        <v-card-text class="grey lighten-2">Método HTTP: {{operation["hydra:method"]}}</v-card-text> 
-        <v-card-text class="grey lighten-2">Descrição da operação em: <a>{{operation["@id"]}} </a></v-card-text> 
+        <v-card-text class="grey lighten-2">Método HTTP: {{operation["hydra:method"]}}</v-card-text>
         <v-card-text class="grey lighten-2"><a>{{optionsLayer.iri}}/{{operation["hydra:operation"]}}/{{parameters_str}}</a></v-card-text>
       </v-card>
     </v-expansion-panel-content>
@@ -27,11 +28,11 @@ export default {
         icon_name: {type: String, required: false},
         title: {type: String, required: false}
     },
-   
+
     data() {
         return {
             parameters_str: ''
-            
+
         }
     },
     methods: {
@@ -52,16 +53,16 @@ export default {
             //this.$emit(changed_item_on, this.selectedItem)
         },
         changeParameter(value) {
-            if (this.parameters_str == '') 
+            if (this.parameters_str == '')
                 this.parameters_str = value
             else
                 this.parameters_str += '&' + value
         },
-            
-       
+
+
     },
     mounted() {
-        
+
     }
 
 }
