@@ -51,11 +51,6 @@
         <v-card-text>
           <basic-hyper-options v-on:closeDialog="closeDialog" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
         </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn  round @click="dialog_options = false">Ok</v-btn>
-          <v-btn  round @click="dialog_options = false">Cancelar</v-btn>
-        </v-card-actions>
       </v-card>
      </v-dialog>
   </v-layout>
@@ -97,10 +92,10 @@ export default {
    }
   },
   methods: {
-    async request(http_method, url) {
+    async request(url, http_method=axios.get ) {
       let iri = null
       try {
-        console.log(url);
+
           const response = await http_method(url)
           return response
 
@@ -110,14 +105,10 @@ export default {
       }
     },
     async clickedOnInfoLayer(a_layer) {
-      console.log(a_layer.iri)
-      const response = await this.request(axios.options, a_layer.iri)
+      const response = await this.request(a_layer.iri, axios.options)
       this.dialog_options = true
       this.layerName = a_layer.name
       this.optionsLayer = new OptionsLayer(response.data["hydra:supportedProperties"], response.data["hydra:supportedOperations"], response.data["@context"], response.data["hydra:iriTemplate"], a_layer.iri)  //supportedProperties, supportedOperations, context,  iriTemplate
-      console.log(this.optionsLayer )
-      this.dialog_options =true
-      
     },
     onChange(anItem) {
       //let changed_item_on = "changed-items-on-list-checkbox"
@@ -134,9 +125,8 @@ export default {
       this.layersFromGeoHyperEntryPoint = []
     },
     closeDialog(options) {
-      console.log(options)
       this.dialog_options=false
-      this.optionsLayer = {}
+      this.optionsLayer = new OptionsLayer([], [], {}, {})
     },
     facadeOL() {
         return this.$store.state.facadeOL
@@ -159,36 +149,21 @@ export default {
     },
 
     async search() {
-
-          const response = await this.request(axios.get, this.url)
-          debugger
+          const response = await this.request(this.url)
+          //debugger
           if (this.isEntryPoint(response.headers))
              this.getLayersFromEntryPoint(response.data)
           else
              this.updateLayerFromHyperResourceURL(response)
     },
-    async addHyperResourceLayer(a_HyperResourceLayer) {
-      let resp_get
-      try {
-               resp_get = await this.request(axios.get, a_HyperResourceLayer.iri)
-               this.facadeOL().addVectorLayerFromGeoJSON(resp_get.data)
-      }
-      catch(err) {
-              console.log('Houve algum erro na requisição. ', err)
-      }
-
-    },
     async layerSwitchClicked(name_iri_boolean_object) {
-      let response = await this.request(axios.get, name_iri_boolean_object.iri)
+      let response = await this.request(name_iri_boolean_object.iri)
       this.updateLayerFromHyperResourceURL(response)
-
     }
   },
   mounted() {
     this.itemsName = this.items.map(item => item.name)
     this.optionsLayer = new OptionsLayer([], [], {}, {})  //supportedProperties, supportedOperations, context,  iriTemplate
-    console.log(this.optionsLayer)
-    
   }
 
 }
