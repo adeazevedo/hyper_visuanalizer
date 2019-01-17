@@ -13,7 +13,7 @@
     "axios": "^0.18.0",
     "ol": "^5.2.0",
     "vue": "^2.5.2",
-    "vuetify": "^1.2.3",
+    "vuetify": "^1.4.2",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

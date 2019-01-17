@@ -3,7 +3,7 @@
     <v-btn icon @click.stop="closeDrawer()"  fixed  top left class="transparent pa-0 ma-0" >
        <v-icon color="pink">{{icon_btn}}</v-icon>
     </v-btn>
-  <v-navigation-drawer :mini-variant.sync="mini" v-model="drawer" app hide-overlay stateless style="margin-top: 55px; opacity: 0.65;" >
+  <v-navigation-drawer :mini-variant.sync="mini" v-model="drawer" app hide-overlay stateless style="margin-top: 55px; opacity: 0.65;">
         <v-list class="pa-0">
             <v-list-tile >
               <v-list-tile-avatar>
@@ -52,7 +52,7 @@
           { title: 'Camadas base', icon: 'dashboard' },
           { title: 'Sobre', icon: 'question_answer' }
         ],
-        mini: true,
+        mini: false,
         right: null,
         baseLayersRadio: [{name: 'Openstreetmap', value: 'OSM'}, {name: 'Google', value: 'google'}, {name: 'Google Satélite', value: 'satelite'}, {name: 'Water color', value: 'watercolor'}, {name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}],
         registeredWMSCapability: [{name: 'BNDES', title: 'Banco Nacional de Desenvolvimento Econômico e Social', url: 'http://www.geoservicos.inde.gov.br/geoserver/BNDES/wms', registration: '', service_type: ''},

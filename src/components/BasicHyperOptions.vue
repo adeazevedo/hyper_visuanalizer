@@ -4,6 +4,7 @@
           <v-tab  :key="1"  ripple > Atributos </v-tab>
           <v-tab  :key="2"  ripple > Operações </v-tab>
           <v-tab  :key="3"  ripple > Requisições </v-tab>
+          <v-tab  :key="4"  ripple > Junções no cliente </v-tab>
           <v-tab-item  :key="1">
              <basic-hyper-options-attribute :optionsLayer="optionsLayer" > </basic-hyper-options-attribute>
           </v-tab-item>
@@ -12,6 +13,9 @@
           </v-tab-item>
           <v-tab-item  :key="3">
               <basic-hyper-options-requisicao @close="closeDialog" :optionsLayer="optionsLayer" > </basic-hyper-options-requisicao>
+          </v-tab-item>
+           <v-tab-item  :key="4">
+              <basic-hyper-join-client @close="closeDialog" :optionsLayer="optionsLayer" > </basic-hyper-join-client>
           </v-tab-item>
         </v-tabs>
 
@@ -22,6 +26,7 @@ import axios from 'axios';
 import BasicHyperOptionsAttribute from './BasicHyperOptionsAttribute'
 import BasicHyperOptionsOperation from './BasicHyperOptionsOperation'
 import BasicHyperOptionsRequisicao from './BasicHyperOptionsRequisicao'
+import BasicHyperJoinClient from './BasicHyperJoinClient'
 export default {
   props: {
     name: {type: String, required: false},
@@ -30,7 +35,7 @@ export default {
     title: {type: String, required: false},
 
   },
-   components: {BasicHyperOptionsAttribute, BasicHyperOptionsOperation, BasicHyperOptionsRequisicao},
+   components: {BasicHyperOptionsAttribute, BasicHyperOptionsOperation, BasicHyperOptionsRequisicao, BasicHyperJoinClient},
   data() {
    return {
      active: null,
