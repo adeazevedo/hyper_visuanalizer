@@ -12,7 +12,7 @@
               <basic-hyper-options-operation :optionsLayer="optionsLayer" > </basic-hyper-options-operation>
           </v-tab-item>
           <v-tab-item  :key="3">
-              <basic-hyper-options-requisicao @close="closeDialog" :optionsLayer="optionsLayer" > </basic-hyper-options-requisicao>
+              <basic-hyper-options-requisicao @selectedUrl="closeDialog" :optionsLayer="optionsLayer" > </basic-hyper-options-requisicao>
           </v-tab-item>
            <v-tab-item  :key="4">
               <basic-hyper-join-client @close="closeDialog" :optionsLayer="optionsLayer" > </basic-hyper-join-client>
@@ -43,8 +43,9 @@ export default {
    }
   },
   methods: {
-    closeDialog() {
-      this.$emit("closeDialog")
+    closeDialog(expressionUrl) {
+      this.$emit("closeDialog", expressionUrl)
+      console.log(expressionUrl)
     },
   },
 

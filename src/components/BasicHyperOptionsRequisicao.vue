@@ -48,7 +48,7 @@
               </v-list-tile-content>
 
               <v-list-tile-action v-if="operation['hydra:expects'].length">
-                <v-btn icon ripple class="light-blue lighten-1" @click.stop="filterSelected(operation)">
+                <v-btn icon ripple class="light-blue lighten-1" @click.stop="operationSelected(operation)">
                   <v-icon>send</v-icon>
                 </v-btn>
               </v-list-tile-action>
@@ -156,7 +156,7 @@ export default {
         },
         async showAttribute (attribute) {
           this.clearAttributes()
-          this.url=this.optionsLayer.iri + "/projection/" + attribute + "/offset-limit/" + this.a_partir_de + "/"+ this.qtd
+          this.url=this.optionsLayer.iri + "/projection/" + attribute + "/offset-limit/" + this.a_partir_de + "&"+ this.qtd
           const response = await this.request(this.url)
           this.amostras=response.data.map(obj => typeof obj[attribute] =='string'?obj[attribute].concat('\n'): ''.concat('\n')  )
 
@@ -172,15 +172,18 @@ export default {
         },
         filterExpects (expects) {
           if (expects) {
-            return expects.map(expect => expect.includes('schema') ? expect.split('/').reverse()[0] : expect.split('#').reverse()[0])
+            return expects.map(expect => expect.parameter.includes('schema') ? expect.parameter.split('/').reverse()[0] : expect.parameter.split('#').reverse()[0])
           }
         },
-        filterSelected (filter) {
-          let expects = this.filterExpects(filter['hydra:expects'])
+        operationSelected (operation) {
+          //console.log(this.optionsLayer.iri)
+         //console.log(operation['hydra:expects'])
+          let expects = this.filterExpects(operation['hydra:expects'])
+          
           if (expects.includes('expression')) {
             expects = "attribute}/{operator}/{value"
           }
-          this.uris.push({filter: filter['hydra:operation'], value: `{${expects}}`})
+          this.uris.push({filter: operation['hydra:operation'], value: `{${expects}}`})
         },
         removeFilter (filter) {
           const filterIndex = this.uris.indexOf(filter)
@@ -200,7 +203,7 @@ export default {
           }
         },
         addFilters (url) {
-          this.$emit('addFilter', url)
+          this.$emit('selectedUrl', url)
           this.close()
         },
         clearUris () {
@@ -218,7 +221,7 @@ export default {
           const uris = this.uris.map(filter =>
             filter.filter ? `${filter.filter}/${filter.value || 'valor'}/` : `${filter.value || 'valor'}/`
           ).join('')
-          this.expressionUrl = this.url + uris
+          this.expressionUrl = this.optionsLayer.iri + uris
           console.log("url");
           console.log(this.url);
           console.log("uris");

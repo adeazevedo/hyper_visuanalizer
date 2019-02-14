@@ -1,49 +1,16 @@
 <template>
-  <v-card>
-    <v-card-title class="indigo white--text headline">
-      Apis
-      <v-spacer> </v-spacer>
-       <v-text-field  label="Entre com a Url da API"></v-text-field>
-    </v-card-title>
-    <v-layout justify-space-between pa-3>
-      <v-flex xs5>
-        <v-treeview :active.sync="active" :items="items" :load-children="selectedItem" :open.sync="open"  activatable
-          active-class="primary--text"
-          class="grey lighten-5"
-          open-on-click
-          transition
-        >
-          <v-icon v-if="!item.children" slot="prepend" slot-scope="{ item, active }" :color="active ? 'primary' : ''">
-              mdi-account
-          </v-icon>
-        </v-treeview>
-      </v-flex>
-      <v-flex d-flex text-xs-center >
-        <v-scroll-y-transition mode="out-in">
-          <div v-if="!selected" class="title grey--text text--lighten-1 font-weight-light" style="align-self: center;">
-            Selecione uma URL
-          </div>
-          <v-card v-else :key="selected.id" class="pt-4 mx-auto" flat max-width="400" >
-            <v-card-text>
-              
-              
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-layout tag="v-card-text"  text-xs-left wrap >
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Company:</v-flex>
-              
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Website:</v-flex>
-              
-              <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Phone:</v-flex>
-              
-            </v-layout>
-          </v-card>
-        </v-scroll-y-transition>
-      </v-flex>
-    </v-layout>
-  </v-card>
+    <v-card>
+        <v-layout row wrap pa-0>
+            <v-flex xs6>
+                <v-treeview :active.sync="active" :items="items"  :open.sync="open" activatable  :load-children="selectedItem" open-on-click ></v-treeview>
+            </v-flex>
+            <v-flex xs6>
+                <span> Desc</span>
+            </v-flex>
+        </v-layout>    
+    </v-card>    
+    
 </template>
-
 <script>
 import axios from 'axios'
 export default {
@@ -72,8 +39,7 @@ export default {
       selected() {
         if (!this.active.length) return undefined
         const id = this.active[0]
-        console.log(this.active[0])
-        console.log(this.items)
+        console.log('selecio')
         return this.apis.find(api => api.id === id)
       }
     },

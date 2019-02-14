@@ -6,8 +6,8 @@
         <v-card-text class="grey lighten-2">Descrição: </v-card-text>
         <v-card-text class="grey lighten-2">Semântica da operação em: <a target="_blank">{{operation["@id"]}} </a></v-card-text>
         <v-card-text class="grey lighten-2" v-if="(operation['hydra:expects'].length)>0">Parâmetros esperados:
-            <template v-for="parameter in operation['hydra:expects']">
-                <v-text-field :label="parameter" append-icon="check_circle"> </v-text-field>
+            <template v-for="obj_parameter in operation['hydra:expects']">
+                <v-text-field :label="obj_parameter['parameter']" append-icon="check_circle"> </v-text-field>
             </template>
         </v-card-text>
         <v-card-text class="grey lighten-2">Retorno da operação: {{operation["hydra:returns"]}}</v-card-text>
