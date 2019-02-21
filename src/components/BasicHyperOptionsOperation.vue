@@ -1,4 +1,5 @@
 <template>
+<div>    
   <v-expansion-panel color="black" focusable>
     <v-expansion-panel-content v-for="(operation, index) in optionsLayer.supported_operations" :key="index">
       <div slot="header">{{operation["hydra:operation"]}}</div>
@@ -12,10 +13,15 @@
         </v-card-text>
         <v-card-text class="grey lighten-2">Retorno da operação: {{operation["hydra:returns"]}}</v-card-text>
         <v-card-text class="grey lighten-2">Método HTTP: {{operation["hydra:method"]}}</v-card-text>
-        <v-card-text class="grey lighten-2"><a>{{optionsLayer.iri}}/{{operation["hydra:operation"]}}/{{parameters_str(operation['hydra:expects'])}}</a></v-card-text>
+        <v-card-text class="grey lighten-2">Exemplo: <a>{{optionsLayer.iri}}/{{operation["hydra:operation"]}}/{{parameters_str(operation['hydra:expects'])}}</a></v-card-text>
       </v-card>
     </v-expansion-panel-content>
   </v-expansion-panel>
+  <div class="botoes">
+    <v-btn round class="cyan darken-1" @click.native="closeDialog">Ok</v-btn>
+
+  </div>
+</div>
 </template>
 
 <script>
@@ -33,7 +39,13 @@ export default {
           if(parameters.length == 0)
             return ''
           return '{' + parameters.join('&') + '}'
+        },
+        closeDialog() {
+          this.$emit('close')
+          console.log('close on BasicHyperOptionsOperation')
         }
+
+
     },
 
 }

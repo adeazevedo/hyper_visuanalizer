@@ -48,13 +48,12 @@
               </v-list-tile-content>
 
               <v-list-tile-action v-if="operation['hydra:expects'].length">
-                <v-btn icon ripple class="light-blue lighten-1" @click.stop="operationSelected(operation)">
+                <v-btn icon ripple class="light-blue lighten-1" @click.stop="selectedOperation(operation)">
                   <v-icon>send</v-icon>
                 </v-btn>
               </v-list-tile-action>
-
               <v-list-tile-action v-else>
-                <v-btn icon ripple @click.stop="functionSelected(option)" :class="operation['hydra:returns'].includes('geojson') ? 'light-blue lighten-1' : ''">
+                <v-btn icon ripple @click.stop="selectedOperation(operation)" :class="operation['hydra:returns'].includes('geojson') ? 'light-blue lighten-1' : ''">
                   <v-icon v-if="operation['hydra:returns'].includes('geojson')">layers</v-icon>
                   <v-icon v-else color="light-blue darken-4">info</v-icon>
                 </v-btn>
@@ -74,7 +73,7 @@
                 </v-list-tile-content>
 
                 <v-list-tile-action>
-                  <v-text-field
+                  <v-text-field v-if="currentOperationsHasParameters()"
                     name="Valor"
                     label="Valor"
                     v-model="filter.value"
@@ -138,6 +137,7 @@ export default {
           amostra: '',
           amostras: [],
           a_partir_de: 1,
+          current_operation: null,
           qtd: 30,
 
         }
@@ -167,19 +167,33 @@ export default {
           const newValue = uri.value.replace(/{attribute}/, attribute)
           this.uris[uriIndex].value = newValue
         },
+        currentOperationsHasParameters() {
+          if (this.current_operation == null)
+            return false
+          console.log(this.current_operation['hydra:expects'])
+          return true
+        },
         clearAttributes () {
           this.attributes = []
         },
         filterExpects (expects) {
+
           if (expects) {
             return expects.map(expect => expect.parameter.includes('schema') ? expect.parameter.split('/').reverse()[0] : expect.parameter.split('#').reverse()[0])
           }
         },
-        operationSelected (operation) {
+        selectedOperation(operation) {
           //console.log(this.optionsLayer.iri)
          //console.log(operation['hydra:expects'])
+         debugger
           let expects = this.filterExpects(operation['hydra:expects'])
-          
+
+          if (expects.length == 0) {
+            console.log(operation['hydra:operation']);
+             this.uris.push({filter: '/' + operation['hydra:operation']})
+             return
+          }
+
           if (expects.includes('expression')) {
             expects = "attribute}/{operator}/{value"
           }
@@ -204,7 +218,7 @@ export default {
         },
         addFilters (url) {
           this.$emit('selectedUrl', url)
-          this.close()
+          //this.close()
         },
         clearUris () {
           this.uris = []
@@ -213,19 +227,18 @@ export default {
           this.clearUris()
           this.clearAttributes()
           this.$emit('close')
+          console.log('close on BasicHyperOptionsRequisicao')
         },
     },
     computed: {
       expressao: {
         get: function () {
+
           const uris = this.uris.map(filter =>
             filter.filter ? `${filter.filter}/${filter.value || 'valor'}/` : `${filter.value || 'valor'}/`
           ).join('')
+
           this.expressionUrl = this.optionsLayer.iri + uris
-          console.log("url");
-          console.log(this.url);
-          console.log("uris");
-          console.log(this.expressionUrl);
           return this.url + uris
         },
         set: function (newValue) {

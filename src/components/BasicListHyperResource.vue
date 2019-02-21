@@ -49,7 +49,7 @@
      <v-dialog v-model="dialog_options" >
       <v-card>
         <v-card-text>
-          <basic-hyper-options v-on:closeDialog="closeDialog" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
+          <basic-hyper-options v-on:closeDialog="closeDialog" v-on:expressionUrlSelected="expressionUrlSelected" :optionsLayer="optionsLayer" :title="layerName"> </basic-hyper-options>
         </v-card-text>
       </v-card>
      </v-dialog>
@@ -128,6 +128,12 @@ export default {
       this.dialog_options=false
       this.optionsLayer = new OptionsLayer([], [], {}, {})
     },
+    expressionUrlSelected(expressionUrlSelected) {
+      console.log(expressionUrlSelected)
+      this.dialog_options=false
+      this.url = expressionUrlSelected
+      this.search()
+    },
     facadeOL() {
         return this.$store.state.facadeOL
     },
@@ -157,6 +163,7 @@ export default {
              this.updateLayerFromHyperResourceURL(response)
     },
     async layerSwitchClicked(name_iri_boolean_object) {
+
       let response = await this.request(name_iri_boolean_object.iri)
       this.updateLayerFromHyperResourceURL(response)
     }
