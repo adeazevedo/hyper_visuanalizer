@@ -54,19 +54,21 @@ export class FacadeOL {
     baseLayer(a_baseLayer_name) {
       // name: 'Wikimedia', value: 'wikimedia'}, {name: 'Nenhum', value: null}]
       const layers = {
-          'OSM': this.osmBaseLayer(),
-          'google': this.googleBaseLayer() ,
-          'satelite': this.sateliteBaseLayer(),
-          'watercolor': this.watercolorBaseLayer(),
-          'wikimedia': this.wikimediaBaseLayer(),
-          null: this.nullBaseLayer()
-        }
+        'OSM': this.osmBaseLayer(),
+        'google': this.googleBaseLayer() ,
+        'satelite': this.sateliteBaseLayer(),
+        'watercolor': this.watercolorBaseLayer(),
+        'wikimedia': this.wikimediaBaseLayer(),
+        null: this.nullBaseLayer()
+      }
       return layers[a_baseLayer_name]
     }
     setBaseLayer(a_baseLayer_name) {
       this.map.removeLayer(this.currentBaseLayer)
+      
       if (!a_baseLayer_name)
         return
+
       this.currentBaseLayer = this.baseLayer(a_baseLayer_name)
       this.map.addLayer(this.currentBaseLayer)
       this.currentBaseLayer.setZIndex(0);
@@ -80,7 +82,7 @@ export class FacadeOL {
     getWMSCapabilityLayers(requestedXml) {
       let capability_json = this.getWMSCapabilitiesAsJSON(requestedXml)
       let layers = capability_json.Capability.Layer.Layer
-      
+
       return layers.map((a_layer) => new WMSCapabilityLayer(a_layer, capability_json.version, capability_json.Service.OnlineResource))
     }
     getWMSMap(wmsLayer) {
