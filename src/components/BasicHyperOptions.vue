@@ -16,7 +16,7 @@
     <basic-hyper-options-requisicao @selectedUrl="selectedUrl" @close="closeDialog" :optionsLayer="optionsLayer" />
   </v-tab-item>
   <v-tab-item :key="4">
-    <basic-hyper-join-client @close="closeDialog" :optionsLayer="optionsLayer" />
+    <basic-hyper-join-client @close="closeDialog" :optionsLayer="optionsLayer" :hyperLayer="hyperLayer" />
   </v-tab-item>
 </v-tabs>
 </template>
@@ -31,6 +31,7 @@ import BasicHyperJoinClient from './BasicHyperJoinClient'
 export default {
   props: {
     optionsLayer: { type: Object, required: false}, // Items is Array. each Item  is an object => {name: a_name, value: a_value }
+    hyperLayer: {type: Object, required: true},
   },
   components: { BasicHyperOptionsAttribute, BasicHyperOptionsOperation, BasicHyperOptionsRequisicao, BasicHyperJoinClient },
   data() {

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { FacadeOL } from './facade_openLayers.js'
+import { FacadeOL } from './facade_openlayers.js'
 
 Vue.use(Vuex)
 

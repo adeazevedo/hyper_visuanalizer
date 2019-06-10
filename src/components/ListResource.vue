@@ -11,23 +11,8 @@
           </v-list-tile-content>
       </v-list-tile>
 
-      <v-list-tile v-for="(layer, index) in items" :key="index" >
+      <list-item v-for="(layer, index) in items" :key="index" :layer=layer  />
 
-          <v-list-tile-action>
-            <v-btn @click.stop="onClick_requestOptions(layer)" icon>
-              <v-icon color="blue">info</v-icon>
-            </v-btn>
-          </v-list-tile-action>
-          <v-list-tile-action>
-            <v-btn slot="activator" @click.stop="clickedRemoveLayer(layer)" icon>
-              <v-icon color="red">delete</v-icon>
-            </v-btn>
-          </v-list-tile-action>
-          <v-list-tile-action>
-            <v-switch @click.native="layerSwitchClicked(layer)" :label="layer.name" v-model="layer.activated"  color="cyan"/></v-switch>
-          </v-list-tile-action>
-
-        </v-list-tile>
     </v-list-group>
   </v-list>
   <v-layout row justify-center>
@@ -46,10 +31,11 @@
 <script>
 import axios from 'axios';
 import BasicHyperOptions from './BasicHyperOptions'
+import ListItem from './ListResourceItem'
 import { GeoHyperLayerResource, OptionsLayer } from '../utils/LayerResource'
 
 export default {
-  components: { BasicHyperOptions },
+  components: { BasicHyperOptions, ListItem },
   props: {
     icon_name: {type: String, required: false},
     title: {type: String, required: false},
@@ -73,33 +59,13 @@ export default {
         console.log("Houve algum erro durante a requisição. " + this.errors);
       }
     },
-    async onClick_requestOptions(clickedLayer) {
-      console.log(clickedLayer);
-      const response = await this.request(clickedLayer.iri, axios.options)
-      this.dialogOptions = true
-      this.optionsLayer = new OptionsLayer(response.data, clickedLayer.iri)
-    },
-    clickedRemoveLayer(aResourceLayer) {
-      this.facadeOL().map.removeLayer(aResourceLayer.layer)
-      this.$store.commit('removeLayerResource', aResourceLayer)
-    },
     cancel() {
-      this.optionsLayer = new OptionsLayer({}, '')
-    },
-    closeDialog (options) {
-      this.dialogOptions = false
       this.optionsLayer = new OptionsLayer({}, '')
     },
     facadeOL() {
       return this.$store.state.facadeOL
     },
-    layerSwitchClicked(aResourceLayer) {
-      if (aResourceLayer.activated)
-        this.facadeOL().map.addLayer(aResourceLayer.layer)
-      else {
-        this.facadeOL().map.removeLayer(aResourceLayer.layer)
-      }
-    }
+
   },
   computed: {
     items () {

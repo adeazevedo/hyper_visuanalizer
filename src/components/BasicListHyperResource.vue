@@ -95,11 +95,16 @@ export class Layer {
     }
 
     try {
-      if (this._response == null) {
-        const response = await http_method(this.iri)
-        this._response = response
+      const response = await http_method(this.iri)
+
+      if (http_method == axios.get) {
+        if (this._response == null) {
+          this._response = response
+          return this._response
+        }
       }
-      return this._response
+
+      return response
 
     } catch (e) {
       this.errors.push(e)
@@ -182,12 +187,17 @@ export default {
     },
     search (url) {
       let layer = new Layer(url, null)
-      //debugger
-      if (layer.isEntryPoint())
-        this.getLayersFromEntryPoint(layer)
-      else {
-        this.updateLayer(layer)
-      }
+      let isEntryPoint = layer.isEntryPoint()
+
+      isEntryPoint.then(response => {
+        console.log('isEntryPoint', response, layer);
+        if (response) {
+          this.getLayersFromEntryPoint(layer)
+
+        } else {
+          this.updateLayer(layer)
+        }
+      })
     },
     onClick_downloadLayer(clickedLayer) {
       this.updateLayer(clickedLayer)
